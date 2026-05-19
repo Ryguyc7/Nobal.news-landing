@@ -335,14 +335,20 @@
       }
 
       .tabs a:hover,
-      .tabs a:focus {
+      .tabs a:focus,
+      .tabs a.is-active {
         color: var(--purple);
         outline: none;
       }
 
       .tabs a:hover::after,
-      .tabs a:focus::after {
+      .tabs a:focus::after,
+      .tabs a.is-active::after {
         transform: scaleX(1);
+      }
+
+      .menu-toggle {
+        display: none;
       }
 
       body.app-style {
@@ -406,7 +412,8 @@
       }
 
       body.app-style .tabs a:hover,
-      body.app-style .tabs a:focus {
+      body.app-style .tabs a:focus,
+      body.app-style .tabs a.is-active {
         color: var(--text);
         background: rgba(61, 59, 133, 0.92);
         border-color: rgba(106, 103, 178, 0.72);
@@ -775,7 +782,7 @@
       .section {
         position: relative;
         overflow: hidden;
-        min-height: calc(160svh - var(--topbar-height));
+        min-height: calc(185svh - var(--topbar-height));
         display: grid;
         align-content: start;
         padding: 0;
@@ -823,7 +830,7 @@
       .section.is-current .section-layout {
         opacity: 1;
         transform: translateY(0);
-        transition-delay: 700ms;
+        transition-delay: 120ms;
       }
 
       .section.is-current.is-exiting .section-layout {
@@ -885,7 +892,7 @@
       .section.is-current .section-panel {
         opacity: 1;
         transform: translateX(0);
-        transition-delay: 700ms;
+        transition-delay: 120ms;
       }
 
       .section.is-current.is-exiting .section-panel {
@@ -1457,7 +1464,7 @@
 
         .brand,
         .nav-visit {
-          position: static;
+          position: relative;
           transform: none;
         }
 
@@ -1596,8 +1603,196 @@
       }
 
       @media (max-width: 560px) {
-        .tabs a {
+        :root {
+          --topbar-height: 130px;
+        }
+
+        body.app-style {
+          --topbar-height: 130px;
+        }
+
+        .nav {
+          width: calc(100% - 24px);
+          min-height: 72px;
+          padding: 12px 0;
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 10px 12px;
+        }
+
+        body.app-style .nav {
+          min-height: 72px;
+        }
+
+        .brand {
+          position: static;
+          order: 1;
+          width: min(220px, calc(100% - 64px));
+          transform: none;
+        }
+
+        .menu-toggle {
+          position: static;
+          order: 2;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          flex: 0 0 auto;
+          width: 44px;
+          height: 38px;
+          color: #fff;
+          background: rgba(17, 24, 39, 0.96);
+          border: 1px solid rgba(170, 176, 197, 0.72);
+          border-radius: 12px;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.34);
+          cursor: pointer;
+        }
+
+        .menu-toggle:hover,
+        .menu-toggle:focus {
+          border-color: var(--purple);
+          outline: none;
+        }
+
+        .menu-toggle-lines,
+        .menu-toggle-lines::before,
+        .menu-toggle-lines::after {
+          display: block;
+          width: 18px;
+          height: 2px;
+          content: "";
+          background: currentColor;
+          border-radius: 999px;
+          transition:
+            transform 180ms ease,
+            opacity 180ms ease;
+        }
+
+        .menu-toggle-lines {
+          position: relative;
+        }
+
+        .menu-toggle-lines::before,
+        .menu-toggle-lines::after {
+          position: absolute;
+          left: 0;
+        }
+
+        .menu-toggle-lines::before {
+          top: -6px;
+        }
+
+        .menu-toggle-lines::after {
+          top: 6px;
+        }
+
+        .nav.is-menu-open .menu-toggle-lines {
+          transform: rotate(45deg);
+        }
+
+        .nav.is-menu-open .menu-toggle-lines::before {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+
+        .nav.is-menu-open .menu-toggle-lines::after {
+          transform: translateY(-6px) rotate(-90deg);
+        }
+
+        .style-toggle {
+          position: static;
+          order: 3;
+          display: none;
+          justify-content: center;
+          flex: 0 0 100%;
+          width: min(260px, 100%);
+          max-width: 260px;
+          min-height: 38px;
+          margin-top: 6px;
+          margin-inline: auto;
+          padding: 0 12px;
           font-size: 0.72rem;
+          transform: none;
+        }
+
+        .nav.is-menu-open .style-toggle {
+          display: inline-flex;
+        }
+
+        .tabs {
+          display: none;
+          flex-direction: column;
+          flex-wrap: nowrap;
+          align-items: stretch;
+          gap: 8px;
+          overflow: visible;
+        }
+
+        .nav.is-menu-open .tabs {
+          display: flex;
+        }
+
+        .tabs-left {
+          order: 4;
+        }
+
+        .tabs-right {
+          order: 5;
+        }
+
+        .tabs-left,
+        .tabs-right {
+          flex: 0 0 100%;
+          width: min(260px, 100%);
+          max-width: 260px;
+          margin: 0;
+          margin-inline: auto;
+          justify-content: center;
+        }
+
+        .tabs a {
+          width: 100%;
+          min-height: 36px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.72rem;
+          text-align: center;
+        }
+
+        body.app-style .tabs {
+          gap: 8px;
+        }
+
+        body.app-style .tabs a {
+          min-height: 34px;
+          padding: 0 10px;
+          border-radius: 10px;
+          font-size: 0.72rem;
+        }
+
+        .nav-visit {
+          position: relative;
+          order: 6;
+          display: none;
+          align-self: center;
+          flex: 0 0 100%;
+          width: min(260px, 100%);
+          max-width: 260px;
+          min-width: 0;
+          min-height: 38px;
+          padding: 0 38px 0 18px;
+          font-size: 0.78rem;
+          transform: none;
+        }
+
+        .nav-visit::after {
+          right: 18px;
+        }
+
+        .nav.is-menu-open .nav-visit {
+          display: inline-flex;
         }
 
         .section {
@@ -1640,21 +1835,25 @@
       </div>
     </div>
 
-    <button class="style-toggle" type="button" aria-pressed="false">
-      <span class="style-toggle-label">App UI</span>
-      <span class="style-toggle-track" aria-hidden="true"></span>
-    </button>
-
     <header class="topbar">
       <nav class="nav" aria-label="Main navigation">
+        <a class="brand" href="#top" aria-label="nobal.news home">
+          <img class="brand-logo" src="nobal-logo-transparent.png" width="758" height="177" alt="nobal.news" />
+        </a>
+
+        <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+          <span class="menu-toggle-lines" aria-hidden="true"></span>
+        </button>
+
+        <button class="style-toggle" type="button" aria-pressed="false">
+          <span class="style-toggle-label">App UI</span>
+          <span class="style-toggle-track" aria-hidden="true"></span>
+        </button>
+
         <div class="tabs tabs-left" aria-label="Primary sections">
           <a href="#about">About</a>
           <a href="#how">How it works</a>
         </div>
-
-        <a class="brand" href="#top" aria-label="nobal.news home">
-          <img class="brand-logo" src="nobal-logo-transparent.png" width="758" height="177" alt="nobal.news" />
-        </a>
 
         <div class="tabs tabs-right" aria-label="Secondary sections">
           <a href="#features">Features</a>
@@ -1914,6 +2113,38 @@
         localStorage.setItem("nobalLandingStyle", appStyleEnabled ? "app" : "landing");
       });
 
+      const nav = document.querySelector(".nav");
+      const menuToggle = document.querySelector(".menu-toggle");
+      const menuLinks = nav.querySelectorAll("a");
+
+      function closeMobileMenu() {
+        nav.classList.remove("is-menu-open");
+        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.setAttribute("aria-label", "Open menu");
+      }
+
+      menuToggle.addEventListener("click", () => {
+        const menuOpen = nav.classList.toggle("is-menu-open");
+        menuToggle.setAttribute("aria-expanded", String(menuOpen));
+        menuToggle.setAttribute("aria-label", menuOpen ? "Close menu" : "Open menu");
+      });
+
+      menuLinks.forEach(link => {
+        link.addEventListener("click", closeMobileMenu);
+      });
+
+      window.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+          closeMobileMenu();
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 560) {
+          closeMobileMenu();
+        }
+      });
+
       const canvas = document.getElementById("globeCanvas");
       const globeElement = canvas.closest(".globe");
       const globeWrap = canvas.closest(".globe-wrap");
@@ -1980,6 +2211,7 @@
       const showHeroPins = false;
 
       const globeSections = Array.from(document.querySelectorAll(".section[data-globe-side]"));
+      const navSectionLinks = Array.from(document.querySelectorAll(".tabs a[href^='#']"));
       const footer = document.querySelector("footer");
       const scrollCue = document.querySelector(".scroll-cue");
       const topCue = document.querySelector(".top-cue");
@@ -2047,15 +2279,21 @@
       }
 
       function setCurrentSection(activeSection = null, exiting = false) {
+        const activeId = activeSection ? activeSection.id : "";
+
         globeSections.forEach((section) => {
           section.classList.toggle("is-current", section === activeSection);
           section.classList.toggle("is-exiting", section === activeSection && exiting);
+        });
+
+        navSectionLinks.forEach((link) => {
+          link.classList.toggle("is-active", link.getAttribute("href") === `#${activeId}`);
         });
       }
 
       function updateGlobePlacement() {
         const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-        const viewportCenter = viewportHeight * 0.52;
+        const viewportTrigger = viewportHeight * 0.24;
         const footerRect = footer.getBoundingClientRect();
 
         if (footerRect.top < viewportHeight * 1.18) {
@@ -2067,13 +2305,13 @@
 
         const activeSection = globeSections.find((section) => {
           const rect = section.getBoundingClientRect();
-          return rect.top <= viewportCenter && rect.bottom >= viewportCenter;
+          return rect.top <= viewportTrigger && rect.bottom >= viewportTrigger;
         });
 
         if (activeSection) {
           const rect = activeSection.getBoundingClientRect();
-          const sectionProgress = (viewportCenter - rect.top) / Math.max(1, rect.height);
-          const exiting = sectionProgress > 0.68;
+          const sectionProgress = (viewportTrigger - rect.top) / Math.max(1, rect.height);
+          const exiting = sectionProgress > 0.86;
 
           setGlobePlacement(activeSection.dataset.globeSide || "center");
           setCurrentSection(activeSection, exiting);
