@@ -1,0 +1,3114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nobal.news</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <style>
+      :root {
+        --bg: #02040b;
+        --bg-soft: #080b14;
+        --grid: rgba(122, 130, 170, 0.035);
+        --panel: #111827;
+        --panel-2: #171d2e;
+        --line: #30384f;
+        --purple: #3d3b85;
+        --purple-2: #272553;
+        --cyan: #67d7ff;
+        --green: #9bd88f;
+        --text: #f6f7ff;
+        --muted: #aab0c5;
+        --topbar-height: 72px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--text);
+        font-family:
+          "Space Grotesk", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background:
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+          var(--bg);
+        background-size: 18px 18px, 18px 18px, auto;
+        background-attachment: fixed;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .style-toggle {
+        position: fixed;
+        top: 14px;
+        left: 14px;
+        z-index: 30;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 40px;
+        padding: 0 14px;
+        color: var(--text);
+        font: inherit;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        background: rgba(17, 24, 39, 0.78);
+        border: 1px solid rgba(95, 105, 140, 0.36);
+        border-radius: 999px;
+        cursor: pointer;
+        backdrop-filter: blur(16px);
+      }
+
+      .style-toggle-track {
+        position: relative;
+        width: 36px;
+        height: 20px;
+        background: rgba(95, 105, 140, 0.28);
+        border: 1px solid rgba(95, 105, 140, 0.42);
+        border-radius: 999px;
+      }
+
+      .style-toggle-track::after {
+        position: absolute;
+        top: 50%;
+        left: 3px;
+        width: 14px;
+        height: 14px;
+        content: "";
+        background: var(--text);
+        border-radius: 50%;
+        transform: translateY(-50%);
+        transition:
+          left 180ms ease,
+          background 180ms ease;
+      }
+
+      .style-toggle:hover,
+      .style-toggle:focus {
+        border-color: var(--purple);
+        outline: none;
+      }
+
+      .splash {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(circle at 50% 42%, rgba(61, 59, 133, 0.18), transparent 30rem),
+          var(--bg);
+        background-size: auto;
+        transition:
+          opacity 850ms ease,
+          visibility 850ms ease;
+        cursor: pointer;
+      }
+
+      .splash.is-done {
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .splash-content {
+        display: grid;
+        justify-items: center;
+        gap: 18px;
+        width: min(760px, calc(100% - 32px));
+        text-align: center;
+      }
+
+      .splash-logo {
+        width: min(520px, 82vw);
+        height: auto;
+        object-fit: contain;
+        opacity: 0;
+        transform: translateY(14px) scale(0.96);
+        transition:
+          opacity 700ms ease,
+          transform 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+
+      .splash.show-logo .splash-logo {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+
+      .splash-quote {
+        min-height: 1.4em;
+        margin: 0;
+        color: var(--muted);
+        font-size: clamp(0.62rem, 0.82vw, 0.82rem);
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .splash-quote::after {
+        display: inline-block;
+        width: 0.08em;
+        height: 0.85em;
+        margin-left: 0.08em;
+        content: "";
+        background: var(--purple);
+        animation: caretBlink 800ms steps(1) infinite;
+        vertical-align: -0.08em;
+      }
+
+      .splash-quote.is-complete::after {
+        display: none;
+      }
+
+      .splash-skip {
+        position: absolute;
+        top: 22px;
+        left: 22px;
+        color: var(--muted);
+        font-size: 0.74rem;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      body.app-style .style-toggle {
+        background: rgba(27, 33, 49, 0.9);
+        border-color: rgba(95, 105, 140, 0.55);
+        box-shadow: 0 12px 34px rgba(0, 0, 0, 0.28);
+      }
+
+      body.app-style .style-toggle-track {
+        background: rgba(61, 59, 133, 0.72);
+        border-color: rgba(106, 103, 178, 0.8);
+      }
+
+      body.app-style .style-toggle-track::after {
+        left: 17px;
+        background: #fff;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        border-bottom: 1px solid var(--purple);
+        background: rgba(2, 4, 11, 0.82);
+        box-shadow: 0 0 18px rgba(61, 59, 133, 0.46);
+        backdrop-filter: blur(18px);
+      }
+
+      .nav {
+        position: relative;
+        width: min(1180px, calc(100% - 32px));
+        min-height: var(--topbar-height);
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: clamp(28px, 5vw, 72px);
+      }
+
+      .brand {
+        position: absolute;
+        left: 50%;
+        display: inline-flex;
+        align-items: center;
+        width: clamp(210px, 18vw, 260px);
+        text-decoration: none;
+        transform: translateX(-50%);
+      }
+
+      .brand-logo {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        image-rendering: auto;
+      }
+
+      .brand-mark {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 35% 30%, #fff 0 12%, transparent 13%),
+          radial-gradient(circle at 55% 58%, var(--cyan), transparent 30%),
+          linear-gradient(135deg, var(--purple), var(--purple-2));
+        box-shadow: 0 0 22px rgba(61, 59, 133, 0.65);
+      }
+
+      .tabs {
+        display: flex;
+        align-items: center;
+        gap: clamp(22px, 3vw, 38px);
+      }
+
+      .tabs-left {
+        margin-right: calc(clamp(210px, 18vw, 260px) / 2 + clamp(28px, 5vw, 72px));
+      }
+
+      .tabs-right {
+        margin-left: calc(clamp(210px, 18vw, 260px) / 2 + clamp(28px, 5vw, 72px));
+      }
+
+      .nav-visit {
+        position: absolute;
+        right: calc((min(1180px, calc(100vw - 32px)) - 100vw) / 2 + 16px);
+        min-height: 38px;
+        min-width: 180px;
+        padding: 0 44px 0 24px;
+        color: #fff;
+        font-size: 0.8rem;
+        font-weight: 600;
+        white-space: nowrap;
+        background: transparent;
+        border: 1px solid rgba(61, 59, 133, 0.78);
+        box-shadow: none;
+        transition:
+          background 180ms ease,
+          border-color 180ms ease,
+          border-color 180ms ease;
+      }
+
+      .nav-visit::after {
+        position: absolute;
+        right: 14px;
+        width: 7px;
+        height: 7px;
+        content: "";
+        border-right: 1.5px solid currentColor;
+        border-bottom: 1.5px solid currentColor;
+        transform: rotate(-45deg);
+        transition: transform 180ms ease;
+      }
+
+      .nav-visit:hover,
+      .nav-visit:focus {
+        background: rgba(61, 59, 133, 0.12);
+        border-color: var(--purple);
+        outline: none;
+      }
+
+      .nav-visit:hover::after,
+      .nav-visit:focus::after {
+        transform: translateX(4px) rotate(-45deg);
+      }
+
+      .tabs a {
+        position: relative;
+        padding: 8px 0;
+        color: var(--muted);
+        font-size: 0.84rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-decoration: none;
+        text-transform: uppercase;
+        transition: color 180ms ease;
+      }
+
+      .tabs a::after {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 2px;
+        content: "";
+        background: var(--purple);
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 180ms ease;
+      }
+
+      .tabs a:hover,
+      .tabs a:focus {
+        color: var(--purple);
+        outline: none;
+      }
+
+      .tabs a:hover::after,
+      .tabs a:focus::after {
+        transform: scaleX(1);
+      }
+
+      body.app-style {
+        --bg: #090d18;
+        --bg-soft: #101522;
+        --panel: #171d2a;
+        --panel-2: #1b2131;
+        --line: #2c3550;
+        --topbar-height: 86px;
+      }
+
+      body.app-style .topbar {
+        border-bottom-color: rgba(44, 53, 80, 0.72);
+        background: rgba(9, 13, 24, 0.88);
+      }
+
+      body.app-style .nav {
+        min-height: var(--topbar-height);
+      }
+
+      body.app-style .brand {
+        height: auto;
+        justify-content: flex-start;
+        padding: 0;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        clip-path: none;
+      }
+
+      body.app-style .brand-logo {
+        width: 100%;
+      }
+
+      body.app-style .tabs {
+        gap: 14px;
+      }
+
+      body.app-style .tabs a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 42px;
+        padding: 0 18px;
+        color: var(--text);
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: none;
+        background: rgba(23, 29, 42, 0.74);
+        border: 1px solid rgba(44, 53, 80, 0.9);
+        border-radius: 14px;
+        transition:
+          background 180ms ease,
+          border-color 180ms ease,
+          color 180ms ease,
+          transform 180ms ease;
+      }
+
+      body.app-style .tabs a::after {
+        display: none;
+      }
+
+      body.app-style .tabs a:hover,
+      body.app-style .tabs a:focus {
+        color: var(--text);
+        background: rgba(61, 59, 133, 0.92);
+        border-color: rgba(106, 103, 178, 0.72);
+        transform: translateY(-1px);
+      }
+
+      body.app-style .button {
+        border-radius: 12px;
+      }
+
+      body.app-style .button.primary {
+        background: linear-gradient(180deg, #5550aa, var(--purple));
+        border-color: rgba(106, 103, 178, 0.72);
+      }
+
+      body.app-style .button.secondary,
+      body.app-style .nav-visit,
+      body.app-style .footer-globe-panel .button.secondary {
+        background: rgba(23, 29, 42, 0.72);
+        border-color: rgba(44, 53, 80, 0.9);
+        border-radius: 12px;
+      }
+
+      body.app-style .button.secondary:hover,
+      body.app-style .button.secondary:focus,
+      body.app-style .nav-visit:hover,
+      body.app-style .nav-visit:focus,
+      body.app-style .footer-globe-panel .button.secondary:hover,
+      body.app-style .footer-globe-panel .button.secondary:focus {
+        color: var(--text);
+        background: rgba(61, 59, 133, 0.22);
+        border-color: rgba(106, 103, 178, 0.72);
+      }
+
+      .hero {
+        width: 100%;
+        min-height: calc(100svh - var(--topbar-height));
+        margin: 0 auto;
+        display: grid;
+        place-items: center;
+        padding: 34px 0 96px;
+        position: relative;
+        background: transparent;
+        scroll-margin-top: var(--topbar-height);
+      }
+
+      main {
+        background: transparent;
+      }
+
+      .eyebrow {
+        margin: 0 0 18px;
+        color: var(--cyan);
+        font-size: 0.78rem;
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 32px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 0 20px;
+        font-weight: 900;
+        text-decoration: none;
+        border-radius: 8px;
+      }
+
+      .button.primary {
+        background: linear-gradient(180deg, #4b4897, var(--purple));
+        border: 1px solid rgba(142, 148, 232, 0.5);
+        box-shadow: 0 18px 46px rgba(61, 59, 133, 0.32);
+      }
+
+      .button.secondary {
+        color: var(--muted);
+        background: rgba(23, 29, 46, 0.72);
+        border: 1px solid var(--line);
+      }
+
+      .globe-wrap {
+        position: fixed;
+        top: var(--topbar-height);
+        left: 0;
+        z-index: 1;
+        display: grid;
+        place-items: center;
+        width: 100%;
+        height: calc(100svh - var(--topbar-height));
+        min-height: 0;
+        pointer-events: none;
+        opacity: 1;
+        transition: opacity 260ms ease;
+      }
+
+      .globe-wrap.is-muted {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .pin-connector {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        pointer-events: none;
+      }
+
+      .pin-connector path {
+        opacity: 0;
+        stroke: var(--purple);
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        filter: drop-shadow(0 0 8px rgba(61, 59, 133, 0.8));
+        transition: opacity 160ms ease;
+      }
+
+      .pin-callout {
+        position: absolute;
+        z-index: 3;
+        width: min(360px, 82vw);
+        padding: 12px;
+        color: var(--text);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015)),
+          rgba(18, 24, 38, 0.92);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 22px;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -50%) translateY(8px);
+        transition:
+          opacity 160ms ease,
+          transform 160ms ease;
+      }
+
+      .pin-callout.is-visible {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(-50%, -50%);
+      }
+
+      .pin-popup-article-card {
+        display: flex;
+        gap: 12px;
+        cursor: pointer;
+        padding: 0;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        transition:
+          border-color 150ms ease,
+          background-color 150ms ease;
+      }
+
+      .pin-popup-article-card:hover {
+        background: transparent;
+        border-color: transparent;
+      }
+
+      .pin-popup-article-thumb {
+        width: 128px;
+        height: 96px;
+        flex-shrink: 0;
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+        color: rgba(246, 247, 255, 0.7);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        background: rgba(61, 59, 133, 0.34);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+      }
+
+      .pin-popup-article-content {
+        min-width: 0;
+      }
+
+      .pin-popup-article-content p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.45;
+      }
+
+      .pin-popup-article-content strong {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--text);
+        font-size: 0.95rem;
+        line-height: 1.15;
+      }
+
+      .pin-popup-article-content span {
+        display: inline-block;
+        margin-bottom: 8px;
+        color: #8d88ff;
+        font-size: 0.72rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .globe {
+        position: relative;
+        width: min(70svh, 720px, 78vw);
+        aspect-ratio: 1;
+        overflow: visible;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        pointer-events: auto;
+        transform: translateX(var(--globe-offset, 0));
+        transition: transform 1180ms cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: transform;
+      }
+
+      .globe-wrap.globe-left {
+        --globe-offset: clamp(-370px, -28vw, -180px);
+      }
+
+      .globe-wrap.globe-right {
+        --globe-offset: clamp(180px, 28vw, 370px);
+      }
+
+      .globe-wrap.globe-center {
+        --globe-offset: 0;
+      }
+
+      @keyframes caretBlink {
+        0%,
+        49% {
+          opacity: 1;
+        }
+
+        50%,
+        100% {
+          opacity: 0;
+        }
+      }
+
+      .scroll-cue,
+      .top-cue {
+        position: absolute;
+        left: 50%;
+        bottom: 30px;
+        display: inline-grid;
+        justify-items: center;
+        gap: 10px;
+        color: var(--text);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-decoration: none;
+        text-transform: uppercase;
+        transform: translateX(-50%);
+        transition:
+          opacity 220ms ease,
+          visibility 220ms ease;
+      }
+
+      .top-cue {
+        position: relative;
+        left: auto;
+        bottom: auto;
+        z-index: 2;
+        width: 100%;
+        margin: 0 auto 54px;
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transform: none;
+      }
+
+      .top-cue.is-visible {
+        visibility: visible;
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .scroll-cue.is-hidden {
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .scroll-cue::after,
+      .top-cue::before {
+        width: 12px;
+        height: 12px;
+        content: "";
+        color: var(--purple);
+        border-right: 2px solid currentColor;
+        border-bottom: 2px solid currentColor;
+      }
+
+      .scroll-cue::after {
+        transform: rotate(45deg);
+        animation: scrollArrow 1.15s ease-in-out infinite;
+      }
+
+      .top-cue::before {
+        transform: rotate(225deg);
+        animation: topArrow 1.15s ease-in-out infinite;
+      }
+
+      @keyframes scrollArrow {
+        0%,
+        100% {
+          transform: translateY(-3px) rotate(45deg);
+        }
+
+        50% {
+          transform: translateY(6px) rotate(45deg);
+        }
+      }
+
+      @keyframes topArrow {
+        0%,
+        100% {
+          transform: translateY(3px) rotate(225deg);
+        }
+
+        50% {
+          transform: translateY(-6px) rotate(225deg);
+        }
+      }
+
+      #globeCanvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        cursor: grab;
+        touch-action: none;
+      }
+
+      #globeCanvas:active {
+        cursor: grabbing;
+      }
+
+      .section {
+        position: relative;
+        overflow: hidden;
+        min-height: calc(160svh - var(--topbar-height));
+        display: grid;
+        align-content: start;
+        padding: 0;
+        background: transparent;
+        scroll-margin-top: var(--topbar-height);
+      }
+
+      .section:nth-of-type(odd) {
+        background: transparent;
+      }
+
+      .section-stage {
+        position: fixed;
+        top: var(--topbar-height);
+        left: 50%;
+        z-index: 2;
+        display: grid;
+        align-items: center;
+        width: min(1180px, calc(100% - 32px));
+        height: calc(100svh - var(--topbar-height));
+        min-height: calc(100svh - var(--topbar-height));
+        margin: 0 auto;
+        padding: 96px 0;
+        pointer-events: none;
+        transform: translateX(-50%);
+      }
+
+      .section.is-current .section-stage {
+        pointer-events: auto;
+      }
+
+      .section-layout {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: clamp(34px, 6vw, 86px);
+        align-items: center;
+        min-height: clamp(430px, 58svh, 680px);
+        opacity: 0;
+        transform: translateY(34px);
+        transition:
+          opacity 650ms ease,
+          transform 650ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+
+      .section.is-current .section-layout {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 700ms;
+      }
+
+      .section.is-current.is-exiting .section-layout {
+        opacity: 0;
+        transition-delay: 0ms;
+      }
+
+      .section-layout.reverse {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .section-copy {
+        display: grid;
+        gap: 22px;
+        width: min(580px, 100%);
+      }
+
+      .section.globe-left .section-copy,
+      .section.globe-left .section-panel {
+        grid-column: 2;
+        justify-self: end;
+      }
+
+      .section.globe-right .section-copy,
+      .section.globe-right .section-panel {
+        grid-column: 1;
+        justify-self: start;
+      }
+
+      .section-panel {
+        width: min(780px, calc(100vw - 16px));
+        padding: clamp(22px, 4vw, 38px);
+        background:
+          radial-gradient(circle at 18% 18%, rgba(61, 59, 133, 0.14), transparent 16rem),
+          linear-gradient(135deg, rgba(10, 13, 22, 0.9), rgba(5, 7, 14, 0.96));
+        border: 1px solid rgba(95, 105, 140, 0.24);
+        box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+        opacity: 0;
+        transition:
+          opacity 650ms ease,
+          transform 650ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+
+      .section-panel.from-left {
+        margin-left: calc((100vw - min(1180px, calc(100vw - 32px))) / -2);
+        border-left: 0;
+        border-radius: 0 8px 8px 0;
+        transform: translateX(-88px);
+      }
+
+      .section-panel.from-right {
+        margin-left: auto;
+        margin-right: calc((100vw - min(1180px, calc(100vw - 32px))) / -2);
+        border-right: 0;
+        border-radius: 8px 0 0 8px;
+        transform: translateX(88px);
+      }
+
+      .section.is-current .section-panel {
+        opacity: 1;
+        transform: translateX(0);
+        transition-delay: 700ms;
+      }
+
+      .section.is-current.is-exiting .section-panel {
+        opacity: 0;
+        transition-delay: 0ms;
+      }
+
+      .section-panel.center-panel {
+        margin-inline: auto;
+        border: 1px solid rgba(95, 105, 140, 0.36);
+        border-radius: 8px;
+        transform: translateY(36px);
+      }
+
+      .section.is-current .section-panel.center-panel {
+        transform: translateY(0);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        .section-panel {
+          opacity: 1 !important;
+          transform: none !important;
+          transition: none !important;
+        }
+
+        .section-layout {
+          opacity: 1 !important;
+          transform: none !important;
+          transition: none !important;
+        }
+
+        .splash {
+          display: none;
+        }
+      }
+
+      .section-header {
+        max-width: 720px;
+        margin-bottom: 34px;
+      }
+
+      .section h2 {
+        margin-bottom: 14px;
+        font-size: clamp(2rem, 4vw, 3.4rem);
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      .section-header p {
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.7;
+      }
+
+      .story-title {
+        max-width: 620px;
+        margin: 0 0 18px;
+        padding: 0;
+        color: var(--text);
+        font-size: clamp(2.1rem, 4vw, 4rem);
+        line-height: 1.05;
+        font-weight: 700;
+        background: none;
+        border-radius: 0;
+      }
+
+      .story-kicker {
+        max-width: 560px;
+        margin: 0;
+        padding: 0;
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.65;
+        background: none;
+        border-radius: 0;
+      }
+
+      .story-list {
+        display: grid;
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .story-list li {
+        width: auto;
+        padding: 16px 18px;
+        color: var(--text);
+        line-height: 1.45;
+        background: rgba(17, 24, 39, 0.52);
+        border: 1px solid rgba(95, 105, 140, 0.22);
+        border-radius: 8px;
+      }
+
+      .story-list li:nth-child(odd) {
+        background: rgba(61, 59, 133, 0.24);
+        border-color: rgba(61, 59, 133, 0.48);
+      }
+
+      .story-list strong {
+        font-weight: 800;
+      }
+
+      .story-visual {
+        width: min(430px, 86%);
+        margin: 0 auto;
+      }
+
+      .section-globe {
+        display: none;
+        width: min(430px, 86%);
+        aspect-ratio: 1;
+        margin: 0 auto;
+      }
+
+      #sectionGlobeCanvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        cursor: grab;
+        touch-action: none;
+      }
+
+      #sectionGlobeCanvas:active {
+        cursor: grabbing;
+      }
+
+      .mock-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin: 0;
+      }
+
+      .story-visual + .story-list,
+      .mock-grid + .story-list {
+        margin-top: 22px;
+      }
+
+      .section-visual-stack {
+        display: grid;
+        gap: 22px;
+      }
+
+      .mock-card {
+        min-height: 150px;
+        padding: 12px;
+        background: rgba(226, 230, 236, 0.88);
+        border-radius: 4px;
+        color: #10131d;
+      }
+
+      .mock-card::before {
+        display: block;
+        width: 70%;
+        height: 8px;
+        margin-bottom: 10px;
+        content: "";
+        background: #1c2232;
+        border-radius: 999px;
+      }
+
+      .mock-card span {
+        display: block;
+        height: 34px;
+        margin-bottom: 8px;
+        background: var(--purple);
+        border-radius: 3px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .card {
+        min-height: 220px;
+        padding: 24px;
+        background: linear-gradient(180deg, rgba(23, 29, 46, 0.86), rgba(12, 16, 27, 0.9));
+        border: 1px solid rgba(95, 105, 140, 0.34);
+        border-radius: 8px;
+      }
+
+      .card h3 {
+        margin-bottom: 12px;
+        font-size: 1.2rem;
+      }
+
+      .card p {
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .number {
+        display: inline-grid;
+        width: 36px;
+        height: 36px;
+        margin-bottom: 20px;
+        place-items: center;
+        color: #07152b;
+        font-weight: 950;
+        background: var(--green);
+        border-radius: 50%;
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 28px;
+        align-items: start;
+      }
+
+      .feature-list {
+        display: grid;
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .feature-list li {
+        padding: 18px 20px;
+        color: var(--muted);
+        background: rgba(17, 24, 39, 0.68);
+        border: 1px solid rgba(95, 105, 140, 0.28);
+        border-radius: 8px;
+      }
+
+      .feature-list strong {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--text);
+      }
+
+      .cta {
+        padding: 54px;
+        background:
+          radial-gradient(circle at 80% 20%, rgba(103, 215, 255, 0.14), transparent 20rem),
+          linear-gradient(135deg, rgba(61, 59, 133, 0.48), rgba(17, 24, 39, 0.86));
+        border: 1px solid rgba(126, 132, 218, 0.36);
+        border-radius: 8px;
+      }
+
+      .cta p {
+        max-width: 680px;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .section-panel .cta {
+        padding: 0;
+        background: none;
+        border: 0;
+      }
+
+      body.app-style main {
+        background: transparent;
+      }
+
+      body.app-style .section {
+        background: transparent;
+      }
+
+      body.app-style .section:nth-of-type(odd) {
+        background: transparent;
+      }
+
+      body.app-style .story-list li,
+      body.app-style .section-panel,
+      body.app-style .contact-card {
+        background:
+          linear-gradient(180deg, rgba(31, 37, 53, 0.88), rgba(18, 23, 36, 0.92));
+        border: 1px solid rgba(68, 78, 112, 0.78);
+        border-radius: 16px;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.04),
+          0 18px 48px rgba(0, 0, 0, 0.2);
+      }
+
+      body.app-style .story-list li:nth-child(odd) {
+        background:
+          linear-gradient(180deg, rgba(61, 59, 133, 0.44), rgba(33, 37, 66, 0.88));
+        border-color: rgba(106, 103, 178, 0.62);
+      }
+
+      body.app-style .mock-card {
+        color: var(--text);
+        background:
+          linear-gradient(180deg, rgba(31, 37, 53, 0.88), rgba(18, 23, 36, 0.92));
+        border: 1px solid rgba(68, 78, 112, 0.78);
+        border-radius: 16px;
+      }
+
+      body.app-style .mock-card::before {
+        background: rgba(246, 247, 255, 0.28);
+      }
+
+      body.app-style .cta {
+        background:
+          radial-gradient(circle at 80% 20%, rgba(61, 59, 133, 0.24), transparent 20rem),
+          linear-gradient(180deg, rgba(31, 37, 53, 0.88), rgba(18, 23, 36, 0.92));
+        border-color: rgba(68, 78, 112, 0.78);
+        border-radius: 16px;
+      }
+
+      body.app-style footer {
+        background: transparent;
+      }
+
+      body.app-style .footer-contact {
+        padding: 18px;
+        background: rgba(23, 29, 42, 0.56);
+        border: 1px solid rgba(68, 78, 112, 0.48);
+        border-radius: 14px;
+      }
+
+      footer {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        margin: 0;
+        padding: 62px 0 38px;
+        color: var(--muted);
+        border-top: 1px solid rgba(95, 105, 140, 0.2);
+        background: transparent;
+      }
+
+      .footer-inner {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .footer-grid {
+        display: grid;
+        grid-template-columns: minmax(520px, 1.55fr) minmax(140px, 0.42fr) minmax(140px, 0.42fr) minmax(230px, 0.72fr);
+        gap: clamp(40px, 5vw, 72px);
+        align-items: start;
+      }
+
+      .footer-intro {
+        display: grid;
+        grid-template-columns: minmax(240px, 0.9fr) minmax(220px, 0.8fr);
+        gap: 34px;
+        align-items: start;
+      }
+
+      .footer-brand {
+        display: inline-flex;
+        align-items: center;
+        width: clamp(220px, 20vw, 280px);
+        margin-bottom: 18px;
+        color: var(--text);
+        text-decoration: none;
+      }
+
+      .footer-logo {
+        display: block;
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        image-rendering: auto;
+      }
+
+      .footer-about {
+        max-width: 360px;
+        margin-bottom: 0;
+        line-height: 1.7;
+      }
+
+      .footer-column h3,
+      .footer-globe-panel h3 {
+        margin: 0 0 14px;
+        color: var(--text);
+        font-size: 0.78rem;
+        font-weight: 900;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .footer-links {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .footer-links a {
+        position: relative;
+        display: inline-block;
+        padding-right: 18px;
+        color: var(--muted);
+        text-decoration: none;
+        transition:
+          color 180ms ease,
+          transform 180ms ease;
+      }
+
+      .footer-links a::after {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        width: 7px;
+        height: 7px;
+        content: "";
+        border-right: 1.5px solid currentColor;
+        border-bottom: 1.5px solid currentColor;
+        color: var(--purple);
+        opacity: 0;
+        transform: translate(-8px, -50%) rotate(-45deg);
+        transition:
+          opacity 180ms ease,
+          transform 180ms ease;
+      }
+
+      .footer-links a:hover,
+      .footer-links a:focus {
+        color: var(--purple);
+        transform: translateX(6px);
+        outline: none;
+      }
+
+      .footer-links a:hover::after,
+      .footer-links a:focus::after {
+        opacity: 1;
+        transform: translate(0, -50%) rotate(-45deg);
+      }
+
+      .footer-contact {
+        display: grid;
+        gap: 10px;
+        margin-top: 4px;
+        padding-left: 24px;
+        border-left: 1px solid rgba(95, 105, 140, 0.18);
+        line-height: 1.55;
+        min-width: 0;
+      }
+
+      .footer-contact span {
+        color: var(--text);
+        font-size: 0.78rem;
+        font-weight: 900;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .footer-contact p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .footer-contact a {
+        width: fit-content;
+        color: var(--text);
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .footer-contact a:hover,
+      .footer-contact a:focus {
+        color: var(--purple);
+        outline: none;
+      }
+
+      .footer-globe-panel {
+        display: grid;
+        justify-items: center;
+        gap: 14px;
+      }
+
+      .footer-globe {
+        width: min(150px, 100%);
+        aspect-ratio: 1;
+      }
+
+      #footerGlobeCanvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        cursor: grab;
+        touch-action: none;
+      }
+
+      #footerGlobeCanvas:active {
+        cursor: grabbing;
+      }
+
+      .footer-globe-panel .button {
+        position: relative;
+        width: min(220px, 100%);
+        min-height: 44px;
+        padding-right: 40px;
+        color: #fff;
+      }
+
+      .footer-globe-panel .button::after {
+        position: absolute;
+        right: 18px;
+        width: 7px;
+        height: 7px;
+        content: "";
+        border-right: 1.5px solid currentColor;
+        border-bottom: 1.5px solid currentColor;
+        transform: rotate(-45deg);
+        transition: transform 180ms ease;
+      }
+
+      .footer-globe-panel .button:hover::after,
+      .footer-globe-panel .button:focus::after {
+        transform: translateX(4px) rotate(-45deg);
+      }
+
+      .footer-globe-panel .button.secondary {
+        background: transparent;
+        border-color: rgba(61, 59, 133, 0.72);
+        box-shadow: none;
+      }
+
+      .footer-globe-panel .button.secondary:hover,
+      .footer-globe-panel .button.secondary:focus {
+        background: rgba(61, 59, 133, 0.1);
+        border-color: var(--purple);
+        outline: none;
+      }
+
+      .footer-bottom {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        margin-top: 42px;
+        padding-top: 22px;
+        border-top: 1px solid rgba(95, 105, 140, 0.18);
+        font-size: 0.88rem;
+      }
+
+      @media (max-width: 1100px) {
+        .footer-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .footer-intro,
+        .footer-globe-panel {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (max-width: 900px) {
+        :root {
+          --topbar-height: 142px;
+        }
+
+        body.app-style {
+          --topbar-height: 142px;
+        }
+
+        .nav {
+          min-height: auto;
+          padding: 14px 0;
+          flex-direction: column;
+          gap: 14px;
+          justify-items: center;
+        }
+
+        .brand,
+        .nav-visit {
+          position: static;
+          transform: none;
+        }
+
+        .tabs-left,
+        .tabs-right {
+          margin: 0;
+        }
+
+        .nav-visit {
+          align-self: center;
+        }
+
+        .tabs {
+          width: 100%;
+          justify-content: center;
+          overflow-x: auto;
+        }
+
+        .tabs a {
+          white-space: nowrap;
+        }
+
+        .section-panel,
+        .section-panel.from-left,
+        .section-panel.from-right {
+          width: calc(100vw - 16px);
+          margin-left: -16px;
+          margin-right: 0;
+          border-left: 0;
+          border-right: 1px solid rgba(95, 105, 140, 0.36);
+          border-radius: 0 8px 8px 0;
+          transform: translateX(-56px);
+        }
+
+        .section-panel.is-visible {
+          transform: translateX(0);
+        }
+
+        .section.is-current .section-panel {
+          transform: translateX(0);
+        }
+
+        .section-panel.center-panel {
+          width: min(720px, calc(100% - 32px));
+          margin-inline: auto;
+          border: 1px solid rgba(95, 105, 140, 0.36);
+          border-radius: 8px;
+          transform: translateY(36px);
+        }
+
+        .section-panel.center-panel.is-visible {
+          transform: translateY(0);
+        }
+
+        .section.is-current .section-panel.center-panel {
+          transform: translateY(0);
+        }
+
+        .split {
+          grid-template-columns: 1fr;
+        }
+
+        .section-layout,
+        .section-layout.reverse {
+          grid-template-columns: 1fr;
+        }
+
+        .section {
+          min-height: calc(138svh - var(--topbar-height));
+        }
+
+        .section.globe-left .section-copy,
+        .section.globe-right .section-copy,
+        .section.globe-left .section-panel,
+        .section.globe-right .section-panel {
+          grid-column: 1;
+          justify-self: stretch;
+        }
+
+        .hero {
+          padding: 28px 0 88px;
+        }
+
+        .globe-wrap {
+          opacity: 0.28;
+        }
+
+        .globe-wrap.globe-center {
+          opacity: 1;
+        }
+
+        .globe-wrap.is-muted {
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        .globe-wrap.globe-left {
+          --globe-offset: -18vw;
+        }
+
+        .globe-wrap.globe-right {
+          --globe-offset: 18vw;
+        }
+
+        .globe {
+          width: min(48svh, 460px, 76vw);
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .mock-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .footer-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .footer-intro {
+          grid-template-columns: 1fr;
+        }
+
+        .footer-contact {
+          padding-left: 0;
+          padding-top: 18px;
+          border-left: 0;
+          border-top: 1px solid rgba(95, 105, 140, 0.18);
+        }
+
+        .footer-grid > :first-child,
+        .footer-globe-panel {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .tabs a {
+          font-size: 0.72rem;
+        }
+
+        .section {
+          min-height: auto;
+          padding: 0;
+        }
+
+        .section-stage {
+          position: relative;
+          top: auto;
+          left: auto;
+          height: auto;
+          min-height: auto;
+          padding: 70px 0;
+          pointer-events: auto;
+          transform: none;
+        }
+
+        .cta {
+          padding: 28px;
+        }
+
+        .footer-grid,
+        .footer-bottom {
+          grid-template-columns: 1fr;
+        }
+
+        .footer-bottom {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body id="top">
+    <div class="splash" aria-label="Nobal introduction">
+      <span class="splash-skip">Click to skip</span>
+      <div class="splash-content">
+        <img class="splash-logo" src="nobal-logo-transparent.png" width="758" height="177" alt="nobal.news" />
+        <p class="splash-quote" aria-live="polite"></p>
+      </div>
+    </div>
+
+    <button class="style-toggle" type="button" aria-pressed="false">
+      <span class="style-toggle-label">App UI</span>
+      <span class="style-toggle-track" aria-hidden="true"></span>
+    </button>
+
+    <header class="topbar">
+      <nav class="nav" aria-label="Main navigation">
+        <div class="tabs tabs-left" aria-label="Primary sections">
+          <a href="#about">About</a>
+          <a href="#how">How it works</a>
+        </div>
+
+        <a class="brand" href="#top" aria-label="nobal.news home">
+          <img class="brand-logo" src="nobal-logo-transparent.png" width="758" height="177" alt="nobal.news" />
+        </a>
+
+        <div class="tabs tabs-right" aria-label="Secondary sections">
+          <a href="#features">Features</a>
+          <a href="#access">Access</a>
+        </div>
+
+        <a class="button nav-visit" href="https://nobal.news" target="_blank" rel="noopener noreferrer">Visit nobal.news</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-label="Nobal introduction">
+        <div class="globe-wrap" aria-label="Temporary globe preview">
+          <div class="globe" role="img" aria-label="Interactive node globe">
+            <canvas id="globeCanvas"></canvas>
+          </div>
+          <svg class="pin-connector" aria-hidden="true">
+            <path></path>
+          </svg>
+          <div class="pin-callout" aria-hidden="true"></div>
+        </div>
+
+        <a class="scroll-cue" href="#about">Scroll down</a>
+      </section>
+
+      <section class="section globe-left" id="about" data-globe-side="left">
+        <div class="section-stage">
+          <div class="section-layout">
+            <div class="section-copy">
+              <div>
+                <p class="eyebrow">What Nobal is</p>
+                <h2 class="story-title">A calmer way to follow the world.</h2>
+                <p class="story-kicker">
+                  Nobal turns the news homepage into a spatial, context-first view
+                  of what is happening. It starts with place, then connects topic,
+                  timeline, and source context.
+                </p>
+              </div>
+
+              <ul class="story-list">
+                <li><strong>Place-first news</strong><br />Stories begin with where they are happening, making global events easier to scan and compare.</li>
+                <li><strong>Context over clutter</strong><br />Background, related updates, and source trails sit beside the headline instead of being buried.</li>
+                <li><strong>Built for quick checks</strong><br />Open it, scan the globe, drill into what changed, and move on without another endless feed.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section globe-right" id="how" data-globe-side="right">
+        <div class="section-stage">
+          <div class="section-layout reverse">
+            <div class="section-globe" aria-label="Interactive node globe">
+              <canvas id="sectionGlobeCanvas"></canvas>
+            </div>
+
+            <div class="section-copy">
+              <div>
+                <p class="eyebrow">How it works</p>
+                <h2 class="story-title">From globe to story in a few seconds.</h2>
+                <p class="story-kicker">
+                  The globe becomes the entry point: scan a region, open the topic
+                  layer, then follow the timeline and source trail without losing
+                  your place.
+                </p>
+              </div>
+
+              <ul class="story-list">
+                <li><strong>1.</strong> Scan global story clusters</li>
+                <li><strong>2.</strong> Open region and topic context</li>
+                <li><strong>3.</strong> Follow what changed over time</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section globe-left" id="features" data-globe-side="left">
+        <div class="section-stage">
+          <div class="section-layout">
+            <div class="section-copy">
+              <div>
+                <p class="eyebrow">Product system</p>
+                <h2 class="story-title">Context before the click.</h2>
+                <p class="story-kicker">
+                  Nobal is designed for repeated visits, comparison, and calm
+                  reading. The interface makes room for story freshness, source
+                  context, and timeline changes.
+                </p>
+              </div>
+
+              <div class="mock-grid" aria-hidden="true">
+                <div class="mock-card"><span></span>Topic stream</div>
+                <div class="mock-card"><span></span>Source context</div>
+                <div class="mock-card"><span></span>Timeline</div>
+              </div>
+
+              <ul class="story-list">
+                <li><strong>Compare coverage</strong><br />See how the same event is framed across different sources.</li>
+                <li><strong>Track change</strong><br />Separate confirmed updates from developing claims and older context.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section globe-right" id="access" data-globe-side="right">
+        <div class="section-stage">
+          <div class="section-layout">
+            <div class="section-panel from-left">
+            <div class="cta">
+              <p class="eyebrow">Early access</p>
+              <h2>Build the live news layer next.</h2>
+              <p>
+                The globe is now in place as the visual anchor. The next layer can
+                add real story pins, topic filters, source context, and region-based
+                browsing.
+              </p>
+              <div class="hero-actions">
+                <a class="button primary" href="mailto:hello@nobal.news">Request access</a>
+                <a class="button secondary" href="#top">Back to top</a>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <a class="top-cue" href="#top">Back to top</a>
+
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-grid">
+        <div class="footer-intro">
+          <div>
+            <a class="footer-brand" href="#top" aria-label="nobal.news home">
+              <img class="footer-logo" src="nobal-logo-transparent.png" width="758" height="177" alt="nobal.news" />
+            </a>
+            <p class="footer-about">
+              Global news context built around place, signal, and the story behind
+              each headline.
+            </p>
+          </div>
+
+          <div class="footer-contact">
+            <span>Contact</span>
+            <p>Early access, feedback, partnerships, and product questions.</p>
+            <a href="mailto:hello@nobal.news">hello@nobal.news</a>
+          </div>
+        </div>
+
+          <div class="footer-column">
+            <h3>Product</h3>
+            <ul class="footer-links">
+              <li><a href="#about">About</a></li>
+              <li><a href="#how">How it works</a></li>
+              <li><a href="#features">Features</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-column">
+            <h3>Explore</h3>
+            <ul class="footer-links">
+              <li><a href="#top">Globe</a></li>
+              <li><a href="#access">Early access</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-globe-panel">
+            <div class="footer-globe" aria-label="Rotatable footer globe">
+              <canvas id="footerGlobeCanvas"></canvas>
+            </div>
+            <a class="button secondary" href="https://nobal.news" target="_blank" rel="noopener noreferrer">Visit nobal.news</a>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <span>&copy; 2026 nobal.news</span>
+          <span>Built for calmer global awareness.</span>
+        </div>
+      </div>
+    </footer>
+    <script>
+      const splash = document.querySelector(".splash");
+      const splashQuote = document.querySelector(".splash-quote");
+      const introQuote = "Emancipation through information access.";
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const splashTimers = [];
+      let splashSkipped = false;
+
+      function scheduleSplash(callback, delay) {
+        const timer = window.setTimeout(callback, delay);
+        splashTimers.push(timer);
+        return timer;
+      }
+
+      function skipSplash() {
+        splashSkipped = true;
+        splashTimers.forEach(timer => window.clearTimeout(timer));
+        splash.classList.add("is-done");
+      }
+
+      function runSplashIntro() {
+        let index = 0;
+
+        const typeNextCharacter = () => {
+          if (splashSkipped) return;
+
+          splashQuote.textContent = introQuote.slice(0, index);
+
+          if (index <= introQuote.length) {
+            index += 1;
+            scheduleSplash(typeNextCharacter, 28);
+            return;
+          }
+
+          splashQuote.classList.add("is-complete");
+          scheduleSplash(() => {
+            splash.classList.add("show-logo");
+          }, 280);
+
+          scheduleSplash(() => {
+            splash.classList.add("is-done");
+          }, 1700);
+        };
+
+        typeNextCharacter();
+      }
+
+      if (!prefersReducedMotion) {
+        runSplashIntro();
+      } else {
+        splash.classList.add("is-done");
+      }
+
+      splash.addEventListener("click", skipSplash);
+      splash.addEventListener("pointerdown", skipSplash);
+      window.addEventListener("keydown", event => {
+        if (event.key === "Escape" || event.key === " " || event.key === "Enter") {
+          skipSplash();
+        }
+      });
+
+      const styleToggle = document.querySelector(".style-toggle");
+      const savedStyle = localStorage.getItem("nobalLandingStyle");
+
+      if (savedStyle === "app") {
+        document.body.classList.add("app-style");
+        styleToggle.setAttribute("aria-pressed", "true");
+      }
+
+      styleToggle.addEventListener("click", () => {
+        const appStyleEnabled = document.body.classList.toggle("app-style");
+        styleToggle.setAttribute("aria-pressed", String(appStyleEnabled));
+        localStorage.setItem("nobalLandingStyle", appStyleEnabled ? "app" : "landing");
+      });
+
+      const canvas = document.getElementById("globeCanvas");
+      const globeElement = canvas.closest(".globe");
+      const globeWrap = canvas.closest(".globe-wrap");
+      const pinCallout = document.querySelector(".pin-callout");
+      const pinConnectorPath = document.querySelector(".pin-connector path");
+      const ctx = canvas.getContext("2d");
+      const sectionCanvas = document.getElementById("sectionGlobeCanvas");
+      const sectionGlobeElement = sectionCanvas.closest(".section-globe");
+      const sectionCtx = sectionCanvas.getContext("2d");
+      const footerCanvas = document.getElementById("footerGlobeCanvas");
+      const footerGlobeElement = footerCanvas.closest(".footer-globe");
+      const footerCtx = footerCanvas.getContext("2d");
+
+      let width = 0;
+      let height = 0;
+      let dpr = window.devicePixelRatio || 1;
+      let radius = 0;
+      let center = [0, 0];
+      let sectionWidth = 0;
+      let sectionHeight = 0;
+      let sectionRadius = 0;
+      let sectionCenter = [0, 0];
+      let sectionRotation = [-25, -5];
+      let sectionDragging = false;
+      let sectionStartX = 0;
+      let sectionStartY = 0;
+      let sectionStartRotation = [0, 0];
+      let footerWidth = 0;
+      let footerHeight = 0;
+      let footerRadius = 0;
+      let footerCenter = [0, 0];
+      let footerRotation = [-18, -8];
+      let footerDragging = false;
+      let footerStartX = 0;
+      let footerStartY = 0;
+      let footerStartRotation = [0, 0];
+      let land;
+      let nodes = [];
+      let links = [];
+      const defaultHeroRotation = [-25, -5];
+      let rotation = [...defaultHeroRotation];
+      let dragging = false;
+      let activeHeroPin = null;
+      let renderedHeroPin = null;
+      let startX = 0;
+      let startY = 0;
+      let startRotation = [0, 0];
+      let lastFrameTime = 0;
+      let pageVisible = true;
+      let frameIndex = 0;
+      let heroGlobeVisible = true;
+      let sectionGlobeVisible = false;
+      let footerGlobeVisible = false;
+      let heroGlobeRendered = false;
+      let sectionGlobeRendered = false;
+      let footerGlobeRendered = false;
+      let lastPinHitTest = 0;
+      let pageScrolling = false;
+      let scrollStopTimer = 0;
+      let globePlacementFrame = 0;
+      let scrollSpinBase = null;
+      const topAutoSpinLimit = 28;
+      const scrollSpinSpeed = 0.18;
+      const showHeroPins = false;
+
+      const globeSections = Array.from(document.querySelectorAll(".section[data-globe-side]"));
+      const footer = document.querySelector("footer");
+      const scrollCue = document.querySelector(".scroll-cue");
+      const topCue = document.querySelector(".top-cue");
+
+      const effects = {
+        nodeGlow: 0,
+        linePower: 0.28,
+        gridPower: 0.33,
+        edgeGlow: 0,
+        globeOpacity: 0.49,
+        nodeAmount: 1.02,
+        borderNodeAmount: 0.75,
+        nodeSize: 0.65,
+        nodeSizeVariation: 0.74,
+        nodeColor: "#ffffff",
+        lineColor: "#ffffff",
+        globeColor: "#3d3b85",
+        gridColor: "#ffffff",
+        backgroundColor: "#020711",
+        showBorders: false,
+        showBackNodes: true
+      };
+      const renderLimits = {
+        heroBackLinks: Infinity,
+        heroBackNodes: Infinity,
+        heroFrontLinks: Infinity,
+        heroFrontNodes: Infinity,
+        sectionLinks: Infinity,
+        sectionNodes: Infinity,
+        footerLinks: Infinity,
+        footerNodes: Infinity
+      };
+      const canvasDprCap = 1;
+
+      const projection = d3.geoOrthographic().clipAngle(90);
+      const path = d3.geoPath(projection, ctx);
+      const backProjection = d3.geoOrthographic().clipAngle(180);
+      const sectionProjection = d3.geoOrthographic().clipAngle(90);
+      const sectionPath = d3.geoPath(sectionProjection, sectionCtx);
+      const sectionBackProjection = d3.geoOrthographic().clipAngle(180);
+      const footerProjection = d3.geoOrthographic().clipAngle(90);
+      const footerPath = d3.geoPath(footerProjection, footerCtx);
+      const footerBackProjection = d3.geoOrthographic().clipAngle(180);
+      const graticule = d3.geoGraticule();
+
+      function hexToRgb(hex) {
+        const clean = hex.replace("#", "");
+        return {
+          r: parseInt(clean.slice(0, 2), 16),
+          g: parseInt(clean.slice(2, 4), 16),
+          b: parseInt(clean.slice(4, 6), 16)
+        };
+      }
+
+      function colorWithAlpha(hex, alpha) {
+        const { r, g, b } = hexToRgb(hex);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      }
+
+      function setGlobePlacement(side, muted = false) {
+        globeWrap.classList.toggle("globe-center", side === "center");
+        globeWrap.classList.toggle("globe-left", side === "left");
+        globeWrap.classList.toggle("globe-right", side === "right");
+        globeWrap.classList.toggle("is-muted", muted);
+      }
+
+      function setCurrentSection(activeSection = null, exiting = false) {
+        globeSections.forEach((section) => {
+          section.classList.toggle("is-current", section === activeSection);
+          section.classList.toggle("is-exiting", section === activeSection && exiting);
+        });
+      }
+
+      function updateGlobePlacement() {
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const viewportCenter = viewportHeight * 0.52;
+        const footerRect = footer.getBoundingClientRect();
+
+        if (footerRect.top < viewportHeight * 1.18) {
+          setGlobePlacement("center", true);
+          setCurrentSection();
+          hideHeroPinCallout();
+          return;
+        }
+
+        const activeSection = globeSections.find((section) => {
+          const rect = section.getBoundingClientRect();
+          return rect.top <= viewportCenter && rect.bottom >= viewportCenter;
+        });
+
+        if (activeSection) {
+          const rect = activeSection.getBoundingClientRect();
+          const sectionProgress = (viewportCenter - rect.top) / Math.max(1, rect.height);
+          const exiting = sectionProgress > 0.68;
+
+          setGlobePlacement(activeSection.dataset.globeSide || "center");
+          setCurrentSection(activeSection, exiting);
+          if (activeSection.id !== "about") hideHeroPinCallout();
+          return;
+        }
+
+        setGlobePlacement("center");
+        setCurrentSection();
+      }
+
+      function requestGlobePlacementUpdate() {
+        if (globePlacementFrame) return;
+
+        globePlacementFrame = requestAnimationFrame(() => {
+          globePlacementFrame = 0;
+          updateGlobePlacement();
+          syncGlobeRotationToScroll();
+          updateScrollCue();
+        });
+      }
+
+      function updateScrollCue() {
+        const scrollY = window.scrollY || window.pageYOffset || 0;
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const footerRect = footer.getBoundingClientRect();
+        const nearBottom = footerRect.top < viewportHeight * 1.18;
+
+        scrollCue.classList.toggle("is-hidden", scrollY > topAutoSpinLimit);
+        topCue.classList.toggle("is-visible", nearBottom);
+      }
+
+      function syncGlobeRotationToScroll() {
+        if (dragging || activeHeroPin) return;
+
+        const scrollY = window.scrollY || window.pageYOffset || 0;
+
+        if (scrollY <= topAutoSpinLimit) {
+          scrollSpinBase = null;
+          return;
+        }
+
+        if (scrollSpinBase === null) {
+          scrollSpinBase = defaultHeroRotation[0];
+        }
+
+        rotation[0] = scrollSpinBase + scrollY * scrollSpinSpeed;
+        rotation[1] += (defaultHeroRotation[1] - rotation[1]) * 0.18;
+
+        if (!splash.classList.contains("is-done")) return;
+        draw();
+      }
+
+      function mulberry32(seed) {
+        return function next() {
+          let t = seed += 0x6d2b79f5;
+          t = Math.imul(t ^ t >>> 15, t | 1);
+          t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+          return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+      }
+
+      function nodeDisplaySize(roll) {
+        const base = 1.35 * effects.nodeSize;
+        const mix = effects.nodeSizeVariation;
+
+        if (mix <= 0.02) return base;
+        if (roll > 1 - 0.18 * mix) return base * (2.8 + 0.6 * mix);
+        if (roll > 1 - 0.48 * mix) return base * (1.55 + 0.35 * mix);
+        return base;
+      }
+
+      function pointInPolygon(point, polygon) {
+        const [x, y] = point;
+        let inside = false;
+
+        for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+          const [xi, yi] = polygon[i];
+          const [xj, yj] = polygon[j];
+          const intersect = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+
+          if (intersect) inside = !inside;
+        }
+
+        return inside;
+      }
+
+      function pointInFeature(point, feature) {
+        const geo = feature.geometry;
+
+        if (geo.type === "Polygon") return pointInPolygon(point, geo.coordinates[0]);
+        if (geo.type === "MultiPolygon") return geo.coordinates.some(poly => pointInPolygon(point, poly[0]));
+        return false;
+      }
+
+      function outerRings(feature) {
+        const geo = feature.geometry;
+
+        if (geo.type === "Polygon") return [geo.coordinates[0]];
+        if (geo.type === "MultiPolygon") return geo.coordinates.map(poly => poly[0]);
+        return [];
+      }
+
+      function addBoundaryNodes(feature, rand) {
+        if (effects.borderNodeAmount <= 0) return;
+
+        const keepChance = Math.min(0.92, 0.43 * effects.borderNodeAmount);
+
+        outerRings(feature).forEach(ring => {
+          for (let i = 0; i < ring.length - 1; i++) {
+            const [lng1, lat1] = ring[i];
+            const [lng2, lat2] = ring[i + 1];
+            const distance = Math.hypot(lng2 - lng1, lat2 - lat1);
+
+            if (distance > 25) continue;
+
+            const steps = Math.max(1, Math.floor(distance / 4.8));
+
+            for (let step = 0; step < steps; step++) {
+              if (rand() > keepChance) continue;
+
+              const t = step / steps;
+              nodes.push({
+                lng: lng1 + (lng2 - lng1) * t,
+                lat: lat1 + (lat2 - lat1) * t,
+                size: nodeDisplaySize(rand()) * 0.88
+              });
+            }
+          }
+        });
+      }
+
+      function generateNodes() {
+        if (!land) return;
+
+        const rand = mulberry32(89137);
+        const gridStep = 3.1;
+        const keepChance = Math.min(0.92, 0.55 * effects.nodeAmount);
+        nodes = [];
+
+        land.features.forEach(feature => {
+          const [[minLng, minLat], [maxLng, maxLat]] = d3.geoBounds(feature);
+
+          for (let lng = minLng; lng <= maxLng; lng += gridStep) {
+            for (let lat = minLat; lat <= maxLat; lat += gridStep) {
+              if (!pointInFeature([lng, lat], feature) || rand() >= keepChance) continue;
+
+              nodes.push({
+                lng: lng + (rand() - 0.5) * 2,
+                lat: lat + (rand() - 0.5) * 2,
+                size: nodeDisplaySize(rand())
+              });
+            }
+          }
+
+          addBoundaryNodes(feature, rand);
+        });
+
+        links = [];
+
+        for (let i = 0; i < nodes.length; i++) {
+          const nearby = [];
+
+          for (let j = i + 1; j < nodes.length; j++) {
+            const dist = Math.hypot(nodes[i].lng - nodes[j].lng, nodes[i].lat - nodes[j].lat);
+            if (dist < 8.5) nearby.push({ j, dist });
+          }
+
+          nearby
+            .sort((a, b) => a.dist - b.dist)
+            .slice(0, 3)
+            .forEach(n => links.push([i, n.j]));
+        }
+      }
+
+      function visibilityAmount(lng, lat, proj = projection) {
+        const rotate = proj.rotate();
+        const globeCenter = [-rotate[0], -rotate[1]];
+        const distance = d3.geoDistance([lng, lat], globeCenter);
+        const horizon = Math.PI / 2;
+        const fadeRange = 0.28;
+
+        if (distance >= horizon) return 0;
+        return Math.max(0, Math.min(1, (horizon - distance) / fadeRange));
+      }
+
+      function visible(lng, lat) {
+        const rotate = projection.rotate();
+        const globeCenter = [-rotate[0], -rotate[1]];
+        return d3.geoDistance([lng, lat], globeCenter) < Math.PI / 2;
+      }
+
+      function visibleOn(proj, lng, lat) {
+        const rotate = proj.rotate();
+        const globeCenter = [-rotate[0], -rotate[1]];
+        return d3.geoDistance([lng, lat], globeCenter) < Math.PI / 2;
+      }
+
+      function drawSurfaceCircle(x, y, size) {
+        const dx = x - center[0];
+        const dy = y - center[1];
+        const distanceFromCenter = Math.min(1, Math.hypot(dx, dy) / projection.scale());
+        const surfaceFacing = Math.sqrt(1 - distanceFromCenter * distanceFromCenter);
+        const tangentAngle = Math.atan2(dy, dx) + Math.PI / 2;
+        const heightScale = Math.max(size * 0.24, size * surfaceFacing);
+
+        [
+          [5.8, 0.016],
+          [3.4, 0.036],
+          [1.55, 0.09]
+        ].forEach(([scaleFactor, alpha]) => {
+          ctx.beginPath();
+          ctx.ellipse(x, y, size * scaleFactor, heightScale * scaleFactor, tangentAngle, 0, Math.PI * 2);
+          ctx.fillStyle = colorWithAlpha(effects.nodeColor, alpha * effects.nodeGlow);
+          ctx.fill();
+        });
+
+        ctx.beginPath();
+        ctx.ellipse(x, y, size, heightScale, tangentAngle, 0, Math.PI * 2);
+        ctx.fillStyle = colorWithAlpha(effects.nodeColor, 0.96);
+        ctx.fill();
+      }
+
+      function drawBackSurfaceCircle(x, y, size) {
+        ctx.beginPath();
+        ctx.arc(x, y, Math.max(0.7, size * 0.55), 0, Math.PI * 2);
+        ctx.fillStyle = colorWithAlpha(effects.nodeColor, 0.14);
+        ctx.fill();
+      }
+
+      const storyPins = [
+        { lng: -74, lat: 40.7, label: "351", location: "New York, United States", title: "Northeast briefing", detail: "Regional policy, markets, and security updates." },
+        { lng: -118.2, lat: 34.1, label: "148", location: "Los Angeles, United States", title: "Pacific watch", detail: "Technology, climate, and culture signals." },
+        { lng: -46.6, lat: -23.5, label: "543", location: "Sao Paulo, Brazil", title: "South America feed", detail: "Election, energy, and trade context." },
+        { lng: 2.3, lat: 48.9, label: "430", location: "Paris, France", title: "Europe desk", detail: "Diplomacy, regulation, and economic shifts." },
+        { lng: 77.2, lat: 28.6, label: "402", location: "Delhi, India", title: "South Asia stream", detail: "Regional development and security timelines." },
+        { lng: 103.8, lat: 1.3, label: "85", location: "Singapore", title: "Southeast Asia pulse", detail: "Ports, policy, and climate developments." },
+        { lng: 139.7, lat: 35.7, label: "240", location: "Tokyo, Japan", title: "East Asia pulse", detail: "Markets, technology, and regional relations." },
+        { lng: 151.2, lat: -33.9, label: "166", location: "Sydney, Australia", title: "Oceania updates", detail: "Climate, infrastructure, and Pacific affairs." }
+      ];
+
+      function heroPinScreenPosition(pin) {
+        const opacity = visibilityAmount(pin.lng, pin.lat);
+        if (opacity <= 0) return null;
+
+        const p = projection([pin.lng, pin.lat]);
+        if (!p) return null;
+
+        const dx = p[0] - center[0];
+        const dy = p[1] - center[1];
+        const edgeFade = Math.max(0.72, 1 - Math.hypot(dx, dy) / radius);
+        const size = radius * (0.07 + edgeFade * 0.006);
+
+        return { x: p[0], y: p[1], size, opacity };
+      }
+
+      function hideHeroPinCallout() {
+        activeHeroPin = null;
+        renderedHeroPin = null;
+        pinCallout.classList.remove("is-visible");
+        pinCallout.setAttribute("aria-hidden", "true");
+        pinConnectorPath.style.opacity = 0;
+      }
+
+      function updateHeroPinCallout() {
+        if (!activeHeroPin) return;
+
+        const pinPosition = heroPinScreenPosition(activeHeroPin);
+        if (!pinPosition) {
+          hideHeroPinCallout();
+          return;
+        }
+
+        const canvasRect = canvas.getBoundingClientRect();
+        const wrapRect = globeWrap.getBoundingClientRect();
+        const pinX = canvasRect.left - wrapRect.left + pinPosition.x;
+        const pinY = canvasRect.top - wrapRect.top + pinPosition.y - pinPosition.size * 0.36;
+        const cardOnRight = pinX < wrapRect.width * 0.56;
+        const cardX = cardOnRight
+          ? Math.min(wrapRect.width - 140, pinX + 220)
+          : Math.max(140, pinX - 220);
+        const cardY = Math.max(90, Math.min(wrapRect.height - 90, pinY - 36));
+        const connectorEndX = cardOnRight ? cardX - 126 : cardX + 126;
+
+        if (renderedHeroPin !== activeHeroPin) {
+          pinCallout.innerHTML = `
+            <article class="pin-popup-article-card">
+              <div class="pin-popup-article-thumb" aria-hidden="true">Image</div>
+              <div class="pin-popup-article-content">
+                <span>${activeHeroPin.location}</span>
+                <strong>${activeHeroPin.title}</strong>
+                <p>${activeHeroPin.detail}</p>
+              </div>
+            </article>
+          `;
+          renderedHeroPin = activeHeroPin;
+        }
+        pinCallout.style.left = `${cardX}px`;
+        pinCallout.style.top = `${cardY}px`;
+        pinCallout.classList.add("is-visible");
+        pinCallout.setAttribute("aria-hidden", "false");
+        pinConnectorPath.setAttribute("d", `M ${pinX} ${pinY} L ${connectorEndX} ${cardY}`);
+        pinConnectorPath.style.opacity = 1;
+      }
+
+      function drawHeroPin(x, y, size, label, opacity = 1) {
+        const pinBodySize = size;
+        const pinOffsetY = size * 0.22;
+        const strokeW = Math.max(2, size * 0.07);
+        const innerCircleSize = size * 0.58;
+
+        ctx.save();
+        ctx.globalAlpha = opacity;
+        ctx.translate(x, y + pinOffsetY);
+        ctx.rotate(-Math.PI / 4);
+        ctx.shadowColor = "rgba(36, 34, 88, 0.72)";
+        ctx.shadowBlur = size * 0.22;
+        ctx.shadowOffsetY = size * 0.08;
+
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(
+            -pinBodySize / 2,
+            -pinBodySize / 2,
+            pinBodySize,
+            pinBodySize,
+            [pinBodySize / 2, pinBodySize / 2, pinBodySize / 2, 0],
+          );
+        } else {
+          ctx.moveTo(0, -pinBodySize / 2);
+          ctx.arcTo(pinBodySize / 2, -pinBodySize / 2, pinBodySize / 2, 0, pinBodySize / 2);
+          ctx.arcTo(pinBodySize / 2, pinBodySize / 2, 0, pinBodySize / 2, pinBodySize / 2);
+          ctx.arcTo(-pinBodySize / 2, pinBodySize / 2, -pinBodySize / 2, 0, pinBodySize / 2);
+          ctx.lineTo(-pinBodySize / 2, -pinBodySize / 2);
+          ctx.closePath();
+        }
+        ctx.fillStyle = "#373987";
+        ctx.fill();
+        ctx.lineWidth = strokeW;
+        ctx.strokeStyle = "rgba(255,255,255,0.24)";
+        ctx.stroke();
+
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetY = 0;
+        ctx.rotate(Math.PI / 4);
+        ctx.beginPath();
+        ctx.arc(0, 0, innerCircleSize / 2, 0, Math.PI * 2);
+        ctx.fillStyle = "#6f73d6";
+        ctx.fill();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "rgba(255,255,255,0.08)";
+        ctx.stroke();
+
+        ctx.fillStyle = "#fff";
+        ctx.font = `800 ${Math.max(9, size * 0.26)}px Space Grotesk, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(label, 0, 0);
+        ctx.restore();
+      }
+      function drawFooterSurfaceCircle(x, y, size) {
+        const scaledSize = size * 0.45;
+        const dx = x - footerCenter[0];
+        const dy = y - footerCenter[1];
+        const distanceFromCenter = Math.min(1, Math.hypot(dx, dy) / footerProjection.scale());
+        const surfaceFacing = Math.sqrt(1 - distanceFromCenter * distanceFromCenter);
+        const tangentAngle = Math.atan2(dy, dx) + Math.PI / 2;
+        const heightScale = Math.max(scaledSize * 0.24, scaledSize * surfaceFacing);
+
+        footerCtx.beginPath();
+        footerCtx.ellipse(x, y, scaledSize * 3.8, heightScale * 3.8, tangentAngle, 0, Math.PI * 2);
+        footerCtx.fillStyle = colorWithAlpha(effects.nodeColor, 0.035);
+        footerCtx.fill();
+
+        footerCtx.beginPath();
+        footerCtx.ellipse(x, y, scaledSize * 0.86, heightScale * 0.86, tangentAngle, 0, Math.PI * 2);
+        footerCtx.fillStyle = colorWithAlpha(effects.nodeColor, 0.9);
+        footerCtx.fill();
+      }
+
+      function drawFooterBackSurfaceCircle(x, y, size) {
+        footerCtx.beginPath();
+        footerCtx.arc(x, y, Math.max(0.35, size * 0.2), 0, Math.PI * 2);
+        footerCtx.fillStyle = colorWithAlpha(effects.nodeColor, 0.14);
+        footerCtx.fill();
+      }
+
+      function drawSectionSurfaceCircle(x, y, size) {
+        const scaledSize = size * 0.72;
+        const dx = x - sectionCenter[0];
+        const dy = y - sectionCenter[1];
+        const distanceFromCenter = Math.min(1, Math.hypot(dx, dy) / sectionProjection.scale());
+        const surfaceFacing = Math.sqrt(1 - distanceFromCenter * distanceFromCenter);
+        const tangentAngle = Math.atan2(dy, dx) + Math.PI / 2;
+        const heightScale = Math.max(scaledSize * 0.24, scaledSize * surfaceFacing);
+
+        [
+          [5.8, 0.016],
+          [3.4, 0.036],
+          [1.55, 0.09]
+        ].forEach(([scaleFactor, alpha]) => {
+          sectionCtx.beginPath();
+          sectionCtx.ellipse(x, y, scaledSize * scaleFactor, heightScale * scaleFactor, tangentAngle, 0, Math.PI * 2);
+          sectionCtx.fillStyle = colorWithAlpha(effects.nodeColor, alpha * effects.nodeGlow);
+          sectionCtx.fill();
+        });
+
+        sectionCtx.beginPath();
+        sectionCtx.ellipse(x, y, scaledSize, heightScale, tangentAngle, 0, Math.PI * 2);
+        sectionCtx.fillStyle = colorWithAlpha(effects.nodeColor, 0.96);
+        sectionCtx.fill();
+      }
+
+      function drawSectionBackSurfaceCircle(x, y, size) {
+        sectionCtx.beginPath();
+        sectionCtx.arc(x, y, Math.max(0.45, size * 0.4), 0, Math.PI * 2);
+        sectionCtx.fillStyle = colorWithAlpha(effects.nodeColor, 0.14);
+        sectionCtx.fill();
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
+        heroGlobeRendered = true;
+        projection.rotate(rotation);
+        backProjection.rotate(rotation);
+        const heroBackLinkLimit = renderLimits.heroBackLinks;
+        const heroBackNodeLimit = renderLimits.heroBackNodes;
+        const heroFrontLinkLimit = renderLimits.heroFrontLinks;
+        const heroFrontNodeLimit = renderLimits.heroFrontNodes;
+
+        if (effects.showBackNodes) {
+          links.slice(0, heroBackLinkLimit).forEach(([a, b]) => {
+            const n1 = nodes[a];
+            const n2 = nodes[b];
+
+            if (visible(n1.lng, n1.lat) && visible(n2.lng, n2.lat)) return;
+
+            const p1 = backProjection([n1.lng, n1.lat]);
+            const p2 = backProjection([n2.lng, n2.lat]);
+
+            if (!p1 || !p2) return;
+
+            ctx.beginPath();
+            ctx.moveTo(p1[0], p1[1]);
+            ctx.lineTo(p2[0], p2[1]);
+            ctx.strokeStyle = colorWithAlpha(effects.lineColor, 0.09 + 0.16 * effects.linePower);
+            ctx.lineWidth = 0.35 + 0.45 * effects.linePower;
+            ctx.stroke();
+          });
+
+          nodes.slice(0, heroBackNodeLimit).forEach(n => {
+            if (visible(n.lng, n.lat)) return;
+
+            const p = backProjection([n.lng, n.lat]);
+            if (!p) return;
+
+            drawBackSurfaceCircle(p[0], p[1], n.size);
+          });
+        }
+
+        ctx.beginPath();
+        ctx.arc(center[0], center[1], projection.scale(), 0, Math.PI * 2);
+        ctx.fillStyle = colorWithAlpha(effects.backgroundColor, effects.globeOpacity);
+        ctx.fill();
+
+        const innerGlow = ctx.createRadialGradient(center[0], center[1], radius * 0.43, center[0], center[1], radius);
+        innerGlow.addColorStop(0, colorWithAlpha(effects.globeColor, 0));
+        innerGlow.addColorStop(0.7, colorWithAlpha(effects.globeColor, 0.04 * effects.edgeGlow));
+        innerGlow.addColorStop(1, colorWithAlpha(effects.globeColor, 0.34 * effects.edgeGlow));
+        ctx.beginPath();
+        ctx.arc(center[0], center[1], radius, 0, Math.PI * 2);
+        ctx.fillStyle = innerGlow;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(center[0], center[1], radius, 0, Math.PI * 2);
+        ctx.strokeStyle = colorWithAlpha(effects.globeColor, 0.62);
+        ctx.lineWidth = 1.3;
+        ctx.stroke();
+
+        ctx.beginPath();
+        path(graticule());
+        ctx.strokeStyle = colorWithAlpha(effects.gridColor, 0.02 + 0.12 * effects.gridPower);
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+
+        if (land && effects.showBorders) {
+          ctx.beginPath();
+          land.features.forEach(feature => path(feature));
+          ctx.strokeStyle = colorWithAlpha(effects.globeColor, 0.55);
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+
+        links.slice(0, heroFrontLinkLimit).forEach(([a, b]) => {
+          const n1 = nodes[a];
+          const n2 = nodes[b];
+
+          if (!visible(n1.lng, n1.lat) || !visible(n2.lng, n2.lat)) return;
+
+          const p1 = projection([n1.lng, n1.lat]);
+          const p2 = projection([n2.lng, n2.lat]);
+
+          if (!p1 || !p2) return;
+
+          ctx.beginPath();
+          ctx.moveTo(p1[0], p1[1]);
+          ctx.lineTo(p2[0], p2[1]);
+          ctx.strokeStyle = colorWithAlpha(effects.lineColor, 0.14 + 0.52 * effects.linePower);
+          ctx.lineWidth = 0.45 + 0.75 * effects.linePower;
+          ctx.stroke();
+        });
+
+        nodes.slice(0, heroFrontNodeLimit).forEach(n => {
+          if (!visible(n.lng, n.lat)) return;
+
+          const p = projection([n.lng, n.lat]);
+          if (!p) return;
+
+          drawSurfaceCircle(p[0], p[1], n.size);
+        });
+
+        if (showHeroPins) {
+          storyPins.forEach(pin => {
+            const pinPosition = heroPinScreenPosition(pin);
+            if (!pinPosition) return;
+
+            drawHeroPin(pinPosition.x, pinPosition.y, pinPosition.size * 1.45, pin.label, pinPosition.opacity);
+          });
+
+          updateHeroPinCallout();
+        }
+      }
+
+      function drawFooterGlobe() {
+        footerCtx.clearRect(0, 0, footerWidth, footerHeight);
+        footerGlobeRendered = true;
+        footerProjection.rotate(footerRotation);
+        footerBackProjection.rotate(footerRotation);
+
+        if (effects.showBackNodes) {
+          links.slice(0, renderLimits.footerLinks).forEach(([a, b]) => {
+            const n1 = nodes[a];
+            const n2 = nodes[b];
+
+            if (visibleOn(footerProjection, n1.lng, n1.lat) && visibleOn(footerProjection, n2.lng, n2.lat)) return;
+
+            const p1 = footerBackProjection([n1.lng, n1.lat]);
+            const p2 = footerBackProjection([n2.lng, n2.lat]);
+
+            if (!p1 || !p2) return;
+
+            footerCtx.beginPath();
+            footerCtx.moveTo(p1[0], p1[1]);
+            footerCtx.lineTo(p2[0], p2[1]);
+            footerCtx.strokeStyle = colorWithAlpha(effects.lineColor, 0.09 + 0.16 * effects.linePower);
+            footerCtx.lineWidth = 0.35 + 0.45 * effects.linePower;
+            footerCtx.stroke();
+          });
+
+          nodes.slice(0, renderLimits.footerNodes).forEach(n => {
+            if (visibleOn(footerProjection, n.lng, n.lat)) return;
+
+            const p = footerBackProjection([n.lng, n.lat]);
+            if (!p) return;
+
+            drawFooterBackSurfaceCircle(p[0], p[1], n.size);
+          });
+        }
+
+        footerCtx.beginPath();
+        footerCtx.arc(footerCenter[0], footerCenter[1], footerRadius, 0, Math.PI * 2);
+        footerCtx.fillStyle = colorWithAlpha(effects.backgroundColor, effects.globeOpacity);
+        footerCtx.fill();
+
+        const footerGlow = footerCtx.createRadialGradient(
+          footerCenter[0],
+          footerCenter[1],
+          footerRadius * 0.35,
+          footerCenter[0],
+          footerCenter[1],
+          footerRadius,
+        );
+        footerGlow.addColorStop(0, colorWithAlpha(effects.globeColor, 0));
+        footerGlow.addColorStop(0.78, colorWithAlpha(effects.globeColor, 0.08));
+        footerGlow.addColorStop(1, colorWithAlpha(effects.globeColor, 0.48));
+        footerCtx.beginPath();
+        footerCtx.arc(footerCenter[0], footerCenter[1], footerRadius, 0, Math.PI * 2);
+        footerCtx.fillStyle = footerGlow;
+        footerCtx.fill();
+
+        footerCtx.beginPath();
+        footerPath(graticule());
+        footerCtx.strokeStyle = colorWithAlpha(effects.gridColor, 0.08);
+        footerCtx.lineWidth = 0.6;
+        footerCtx.stroke();
+
+        if (land && effects.showBorders) {
+          footerCtx.beginPath();
+          land.features.forEach(feature => footerPath(feature));
+          footerCtx.strokeStyle = colorWithAlpha(effects.globeColor, 0.5);
+          footerCtx.lineWidth = 0.7;
+          footerCtx.stroke();
+        }
+
+        links.slice(0, renderLimits.footerLinks).forEach(([a, b]) => {
+          const n1 = nodes[a];
+          const n2 = nodes[b];
+
+          if (!visibleOn(footerProjection, n1.lng, n1.lat) || !visibleOn(footerProjection, n2.lng, n2.lat)) return;
+
+          const p1 = footerProjection([n1.lng, n1.lat]);
+          const p2 = footerProjection([n2.lng, n2.lat]);
+
+          if (!p1 || !p2) return;
+
+          footerCtx.beginPath();
+          footerCtx.moveTo(p1[0], p1[1]);
+          footerCtx.lineTo(p2[0], p2[1]);
+          footerCtx.strokeStyle = colorWithAlpha(effects.lineColor, 0.32);
+          footerCtx.lineWidth = 0.65;
+          footerCtx.stroke();
+        });
+
+        nodes.slice(0, renderLimits.footerNodes).forEach(n => {
+          if (!visibleOn(footerProjection, n.lng, n.lat)) return;
+
+          const p = footerProjection([n.lng, n.lat]);
+          if (!p) return;
+
+          drawFooterSurfaceCircle(p[0], p[1], n.size * 0.78);
+        });
+
+        footerCtx.beginPath();
+        footerCtx.arc(footerCenter[0], footerCenter[1], footerRadius, 0, Math.PI * 2);
+        footerCtx.strokeStyle = colorWithAlpha(effects.globeColor, 0.72);
+        footerCtx.lineWidth = 1.1;
+        footerCtx.stroke();
+      }
+
+      function drawSectionGlobe() {
+        sectionCtx.clearRect(0, 0, sectionWidth, sectionHeight);
+        sectionGlobeRendered = true;
+        sectionProjection.rotate(sectionRotation);
+        sectionBackProjection.rotate(sectionRotation);
+
+        if (effects.showBackNodes) {
+          links.slice(0, renderLimits.sectionLinks).forEach(([a, b]) => {
+            const n1 = nodes[a];
+            const n2 = nodes[b];
+
+            if (visibleOn(sectionProjection, n1.lng, n1.lat) && visibleOn(sectionProjection, n2.lng, n2.lat)) return;
+
+            const p1 = sectionBackProjection([n1.lng, n1.lat]);
+            const p2 = sectionBackProjection([n2.lng, n2.lat]);
+
+            if (!p1 || !p2) return;
+
+            sectionCtx.beginPath();
+            sectionCtx.moveTo(p1[0], p1[1]);
+            sectionCtx.lineTo(p2[0], p2[1]);
+            sectionCtx.strokeStyle = colorWithAlpha(effects.lineColor, 0.09 + 0.16 * effects.linePower);
+            sectionCtx.lineWidth = 0.35 + 0.45 * effects.linePower;
+            sectionCtx.stroke();
+          });
+
+          nodes.slice(0, renderLimits.sectionNodes).forEach(n => {
+            if (visibleOn(sectionProjection, n.lng, n.lat)) return;
+
+            const p = sectionBackProjection([n.lng, n.lat]);
+            if (!p) return;
+
+            drawSectionBackSurfaceCircle(p[0], p[1], n.size);
+          });
+        }
+
+        sectionCtx.beginPath();
+        sectionCtx.arc(sectionCenter[0], sectionCenter[1], sectionRadius, 0, Math.PI * 2);
+        sectionCtx.fillStyle = colorWithAlpha(effects.backgroundColor, effects.globeOpacity);
+        sectionCtx.fill();
+
+        const sectionGlow = sectionCtx.createRadialGradient(
+          sectionCenter[0],
+          sectionCenter[1],
+          sectionRadius * 0.43,
+          sectionCenter[0],
+          sectionCenter[1],
+          sectionRadius,
+        );
+        sectionGlow.addColorStop(0, colorWithAlpha(effects.globeColor, 0));
+        sectionGlow.addColorStop(0.7, colorWithAlpha(effects.globeColor, 0.04 * effects.edgeGlow));
+        sectionGlow.addColorStop(1, colorWithAlpha(effects.globeColor, 0.34 * effects.edgeGlow));
+        sectionCtx.beginPath();
+        sectionCtx.arc(sectionCenter[0], sectionCenter[1], sectionRadius, 0, Math.PI * 2);
+        sectionCtx.fillStyle = sectionGlow;
+        sectionCtx.fill();
+
+        sectionCtx.beginPath();
+        sectionCtx.arc(sectionCenter[0], sectionCenter[1], sectionRadius, 0, Math.PI * 2);
+        sectionCtx.strokeStyle = colorWithAlpha(effects.globeColor, 0.62);
+        sectionCtx.lineWidth = 1.3;
+        sectionCtx.stroke();
+
+        sectionCtx.beginPath();
+        sectionPath(graticule());
+        sectionCtx.strokeStyle = colorWithAlpha(effects.gridColor, 0.02 + 0.12 * effects.gridPower);
+        sectionCtx.lineWidth = 0.7;
+        sectionCtx.stroke();
+
+        if (land && effects.showBorders) {
+          sectionCtx.beginPath();
+          land.features.forEach(feature => sectionPath(feature));
+          sectionCtx.strokeStyle = colorWithAlpha(effects.globeColor, 0.55);
+          sectionCtx.lineWidth = 0.8;
+          sectionCtx.stroke();
+        }
+
+        links.slice(0, renderLimits.sectionLinks).forEach(([a, b]) => {
+          const n1 = nodes[a];
+          const n2 = nodes[b];
+
+          if (!visibleOn(sectionProjection, n1.lng, n1.lat) || !visibleOn(sectionProjection, n2.lng, n2.lat)) return;
+
+          const p1 = sectionProjection([n1.lng, n1.lat]);
+          const p2 = sectionProjection([n2.lng, n2.lat]);
+
+          if (!p1 || !p2) return;
+
+          sectionCtx.beginPath();
+          sectionCtx.moveTo(p1[0], p1[1]);
+          sectionCtx.lineTo(p2[0], p2[1]);
+          sectionCtx.strokeStyle = colorWithAlpha(effects.lineColor, 0.14 + 0.52 * effects.linePower);
+          sectionCtx.lineWidth = 0.45 + 0.75 * effects.linePower;
+          sectionCtx.stroke();
+        });
+
+        nodes.slice(0, renderLimits.sectionNodes).forEach(n => {
+          if (!visibleOn(sectionProjection, n.lng, n.lat)) return;
+
+          const p = sectionProjection([n.lng, n.lat]);
+          if (!p) return;
+
+          drawSectionSurfaceCircle(p[0], p[1], n.size);
+        });
+      }
+
+      function resizeGlobe() {
+        const rect = globeElement.getBoundingClientRect();
+        dpr = Math.min(window.devicePixelRatio || 1, canvasDprCap);
+        width = Math.max(1, Math.floor(rect.width));
+        height = Math.max(1, Math.floor(rect.height));
+        radius = Math.min(width, height) * 0.46;
+        center = [width / 2, height / 2];
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        projection.scale(radius).translate(center);
+        backProjection.scale(radius).translate(center);
+      }
+
+      function resizeFooterGlobe() {
+        const rect = footerGlobeElement.getBoundingClientRect();
+        dpr = Math.min(window.devicePixelRatio || 1, canvasDprCap);
+        footerWidth = Math.max(1, Math.floor(rect.width));
+        footerHeight = Math.max(1, Math.floor(rect.height));
+        footerRadius = Math.min(footerWidth, footerHeight) * 0.45;
+        footerCenter = [footerWidth / 2, footerHeight / 2];
+        footerCanvas.width = Math.floor(footerWidth * dpr);
+        footerCanvas.height = Math.floor(footerHeight * dpr);
+        footerCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        footerProjection.scale(footerRadius).translate(footerCenter);
+        footerBackProjection.scale(footerRadius).translate(footerCenter);
+      }
+
+      function resizeSectionGlobe() {
+        const rect = sectionGlobeElement.getBoundingClientRect();
+        dpr = Math.min(window.devicePixelRatio || 1, canvasDprCap);
+        sectionWidth = Math.max(1, Math.floor(rect.width));
+        sectionHeight = Math.max(1, Math.floor(rect.height));
+        sectionRadius = Math.min(sectionWidth, sectionHeight) * 0.46;
+        sectionCenter = [sectionWidth / 2, sectionHeight / 2];
+        sectionCanvas.width = Math.floor(sectionWidth * dpr);
+        sectionCanvas.height = Math.floor(sectionHeight * dpr);
+        sectionCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        sectionProjection.scale(sectionRadius).translate(sectionCenter);
+        sectionBackProjection.scale(sectionRadius).translate(sectionCenter);
+      }
+
+      function animate(timestamp = 0) {
+        if (!pageVisible) {
+          requestAnimationFrame(animate);
+          return;
+        }
+
+        const activelyInteracting = dragging || sectionDragging || footerDragging || activeHeroPin;
+        const frameInterval = activelyInteracting ? 16 : 42;
+
+        if (timestamp - lastFrameTime < frameInterval) {
+          requestAnimationFrame(animate);
+          return;
+        }
+
+        lastFrameTime = timestamp;
+        frameIndex += 1;
+
+        const splashVisible = !splash.classList.contains("is-done");
+        const atTop = (window.scrollY || window.pageYOffset || 0) <= topAutoSpinLimit;
+
+        const pauseForScroll = pageScrolling && !dragging && !sectionDragging && !footerDragging;
+
+        if (heroGlobeVisible && !splashVisible && (atTop || dragging || activeHeroPin) && !pauseForScroll) {
+          rotation[0] += dragging || activeHeroPin ? 0 : 0.16;
+          draw();
+        }
+
+        if (!pauseForScroll && !dragging && sectionGlobeVisible && (sectionDragging || frameIndex % 2 === 0)) {
+          sectionRotation[0] += sectionDragging ? 0 : 0.16;
+          drawSectionGlobe();
+        }
+
+        if (!pauseForScroll && !dragging && footerGlobeVisible && (footerDragging || frameIndex % 4 === 0)) {
+          footerRotation[0] += footerDragging ? 0 : 0.12;
+          drawFooterGlobe();
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      function clientPoint(event) {
+        const point = event.touches ? event.touches[0] : event;
+        return { x: point.clientX, y: point.clientY };
+      }
+
+      canvas.addEventListener("pointerdown", event => {
+        dragging = true;
+        hideHeroPinCallout();
+        canvas.setPointerCapture(event.pointerId);
+        startX = event.clientX;
+        startY = event.clientY;
+        startRotation = [...rotation];
+      });
+
+      canvas.addEventListener("pointermove", event => {
+        if (!dragging) {
+          if (!showHeroPins) {
+            canvas.style.cursor = "grab";
+            return;
+          }
+
+          const now = performance.now();
+          if (now - lastPinHitTest < 40) return;
+          lastPinHitTest = now;
+
+          const rect = canvas.getBoundingClientRect();
+          const pointerX = event.clientX - rect.left;
+          const pointerY = event.clientY - rect.top;
+          let nearestPin = null;
+          let nearestDistance = Infinity;
+
+          storyPins.forEach(pin => {
+            const pinPosition = heroPinScreenPosition(pin);
+            if (!pinPosition || pinPosition.opacity < 0.45) return;
+
+            const hitX = pinPosition.x;
+            const hitY = pinPosition.y - pinPosition.size * 0.32;
+            const distance = Math.hypot(pointerX - hitX, pointerY - hitY);
+            const hitRadius = Math.max(36, pinPosition.size * 1.12);
+
+            if (distance < hitRadius && distance < nearestDistance) {
+              nearestPin = pin;
+              nearestDistance = distance;
+            }
+          });
+
+          if (nearestPin) {
+            activeHeroPin = nearestPin;
+            canvas.style.cursor = "pointer";
+          } else {
+            hideHeroPinCallout();
+            canvas.style.cursor = "grab";
+          }
+
+          return;
+        }
+
+        const dx = event.clientX - startX;
+        const dy = event.clientY - startY;
+
+        rotation[0] = startRotation[0] + dx * 0.35;
+        rotation[1] = Math.max(-70, Math.min(70, startRotation[1] - dy * 0.35));
+        scrollSpinBase = null;
+      });
+
+      canvas.addEventListener("pointerup", () => {
+        dragging = false;
+      });
+
+      canvas.addEventListener("pointercancel", () => {
+        dragging = false;
+        hideHeroPinCallout();
+      });
+
+      canvas.addEventListener("pointerleave", () => {
+        if (!dragging) hideHeroPinCallout();
+      });
+
+      sectionCanvas.addEventListener("pointerdown", event => {
+        sectionDragging = true;
+        sectionCanvas.setPointerCapture(event.pointerId);
+        sectionStartX = event.clientX;
+        sectionStartY = event.clientY;
+        sectionStartRotation = [...sectionRotation];
+      });
+
+      sectionCanvas.addEventListener("pointermove", event => {
+        if (!sectionDragging) return;
+
+        const dx = event.clientX - sectionStartX;
+        const dy = event.clientY - sectionStartY;
+
+        sectionRotation[0] = sectionStartRotation[0] + dx * 0.35;
+        sectionRotation[1] = Math.max(-70, Math.min(70, sectionStartRotation[1] - dy * 0.35));
+      });
+
+      sectionCanvas.addEventListener("pointerup", () => {
+        sectionDragging = false;
+      });
+
+      sectionCanvas.addEventListener("pointercancel", () => {
+        sectionDragging = false;
+      });
+
+      footerCanvas.addEventListener("pointerdown", event => {
+        footerDragging = true;
+        footerCanvas.setPointerCapture(event.pointerId);
+        footerStartX = event.clientX;
+        footerStartY = event.clientY;
+        footerStartRotation = [...footerRotation];
+      });
+
+      footerCanvas.addEventListener("pointermove", event => {
+        if (!footerDragging) return;
+
+        const dx = event.clientX - footerStartX;
+        const dy = event.clientY - footerStartY;
+
+        footerRotation[0] = footerStartRotation[0] + dx * 0.38;
+        footerRotation[1] = Math.max(-70, Math.min(70, footerStartRotation[1] - dy * 0.38));
+      });
+
+      footerCanvas.addEventListener("pointerup", () => {
+        footerDragging = false;
+      });
+
+      footerCanvas.addEventListener("pointercancel", () => {
+        footerDragging = false;
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        pageVisible = !document.hidden;
+      });
+
+      window.addEventListener(
+        "scroll",
+        () => {
+          pageScrolling = true;
+          requestGlobePlacementUpdate();
+          window.clearTimeout(scrollStopTimer);
+          scrollStopTimer = window.setTimeout(() => {
+            pageScrolling = false;
+          }, 140);
+        },
+        { passive: true },
+      );
+
+      const globeVisibilityObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.target === globeElement) {
+              heroGlobeVisible = entry.isIntersecting;
+              if (!heroGlobeVisible) hideHeroPinCallout();
+              if (heroGlobeVisible && !heroGlobeRendered && splash.classList.contains("is-done")) {
+                draw();
+              }
+            }
+
+            if (entry.target === sectionGlobeElement) {
+              sectionGlobeVisible = entry.isIntersecting;
+              if (sectionGlobeVisible && !sectionGlobeRendered) {
+                drawSectionGlobe();
+              }
+            }
+
+            if (entry.target === footerGlobeElement) {
+              footerGlobeVisible = entry.isIntersecting;
+              if (footerGlobeVisible && !footerGlobeRendered) {
+                drawFooterGlobe();
+              }
+            }
+          });
+        },
+        { rootMargin: "120px" },
+      );
+
+      globeVisibilityObserver.observe(globeElement);
+      globeVisibilityObserver.observe(sectionGlobeElement);
+      globeVisibilityObserver.observe(footerGlobeElement);
+
+      new ResizeObserver(resizeGlobe).observe(globeElement);
+      new ResizeObserver(resizeSectionGlobe).observe(sectionGlobeElement);
+      new ResizeObserver(resizeFooterGlobe).observe(footerGlobeElement);
+      window.addEventListener("resize", requestGlobePlacementUpdate, { passive: true });
+      resizeGlobe();
+      resizeSectionGlobe();
+      resizeFooterGlobe();
+      updateGlobePlacement();
+      syncGlobeRotationToScroll();
+      updateScrollCue();
+
+      fetch("https://raw.githubusercontent.com/martynafford/natural-earth-geojson/master/110m/physical/ne_110m_land.json")
+        .then(response => response.json())
+        .then(data => {
+          land = data;
+          generateNodes();
+        })
+        .catch(() => {
+          nodes = [];
+          links = [];
+        })
+        .finally(() => {
+          draw();
+          drawSectionGlobe();
+          drawFooterGlobe();
+          animate();
+        });
+    </script>
+  </body>
+</html>
