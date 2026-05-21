@@ -12,7 +12,7 @@
       :root {
         --bg: #02040b;
         --bg-soft: #080b14;
-        --grid: rgba(122, 130, 170, 0.035);
+        --grid: rgba(122, 130, 170, 0.085);
         --panel: #111827;
         --panel-2: #171d2e;
         --line: #30384f;
@@ -354,6 +354,7 @@
       body.app-style {
         --bg: #090d18;
         --bg-soft: #101522;
+        --grid: rgba(122, 130, 170, 0.035);
         --panel: #171d2a;
         --panel-2: #1b2131;
         --line: #2c3550;
@@ -466,7 +467,7 @@
 
       .eyebrow {
         margin: 0 0 18px;
-        color: var(--cyan);
+        color: #8d88ff;
         font-size: 0.78rem;
         font-weight: 900;
         letter-spacing: 0.18em;
@@ -522,6 +523,7 @@
         min-height: 0;
         pointer-events: none;
         opacity: 1;
+        transform: translateY(var(--footer-push, 0px));
         transition: opacity 260ms ease;
       }
 
@@ -807,11 +809,19 @@
         margin: 0 auto;
         padding: 96px 0;
         pointer-events: none;
-        transform: translateX(-50%);
+        transform: translate(-50%, var(--footer-push, 0px));
       }
 
       .section.is-current .section-stage {
         pointer-events: auto;
+      }
+
+      html.is-footer-pushing .globe-wrap,
+      html.is-footer-pushing .section-stage,
+      html.is-footer-pushing .section-layout,
+      html.is-footer-pushing .section-panel,
+      html.is-footer-pushing .globe {
+        transition: none !important;
       }
 
       .section-layout {
@@ -1154,6 +1164,35 @@
         border: 0;
       }
 
+      #access .section-panel {
+        width: min(710px, calc(100vw - 112px));
+        padding: clamp(18px, 2.4vw, 28px) clamp(24px, 3.4vw, 42px);
+      }
+
+      #access .section-panel.from-left {
+        margin-left: 0;
+        border-left: 1px solid rgba(95, 105, 140, 0.24);
+        border-radius: 8px;
+        transform: translateX(-64px);
+      }
+
+      #access .cta h2 {
+        max-width: 650px;
+        margin-bottom: 14px;
+        font-size: clamp(1.85rem, 2.85vw, 3rem);
+        line-height: 1.02;
+      }
+
+      #access .cta p {
+        max-width: 620px;
+        font-size: 0.96rem;
+        line-height: 1.55;
+      }
+
+      #access .hero-actions {
+        margin-top: 22px;
+      }
+
       body.app-style main {
         background: transparent;
       }
@@ -1205,7 +1244,13 @@
       }
 
       body.app-style footer {
-        background: transparent;
+        border-top-color: rgba(68, 78, 112, 0.78);
+        background:
+          linear-gradient(180deg, rgba(23, 29, 42, 0.86), rgba(9, 13, 24, 0.92)),
+          rgba(9, 13, 24, 0.78);
+        box-shadow:
+          0 -1px 0 rgba(255, 255, 255, 0.05),
+          0 -18px 44px rgba(0, 0, 0, 0.18);
       }
 
       body.app-style .footer-contact {
@@ -1222,8 +1267,15 @@
         margin: 0;
         padding: 62px 0 38px;
         color: var(--muted);
-        border-top: 1px solid rgba(95, 105, 140, 0.2);
-        background: transparent;
+        border-top: 1px solid rgba(61, 59, 133, 0.72);
+        background:
+          linear-gradient(180deg, rgba(17, 24, 39, 0.82), rgba(2, 4, 11, 0.9)),
+          rgba(2, 4, 11, 0.74);
+        box-shadow:
+          0 -1px 0 rgba(142, 148, 232, 0.12),
+          0 -18px 44px rgba(61, 59, 133, 0.18);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
       }
 
       .footer-inner {
@@ -1265,7 +1317,26 @@
       .footer-about {
         max-width: 360px;
         margin-bottom: 0;
+        color: rgba(246, 247, 255, 0.78);
+        font-weight: 700;
         line-height: 1.7;
+      }
+
+      .footer-intro > div:first-child {
+        display: grid;
+        justify-items: center;
+        text-align: center;
+      }
+
+      .footer-intro > div:first-child .footer-brand {
+        width: clamp(190px, 17vw, 240px);
+        margin-inline: auto;
+      }
+
+      .footer-intro > div:first-child .footer-about {
+        max-width: none;
+        margin-inline: auto;
+        text-align: center;
       }
 
       .footer-column h3,
@@ -1290,7 +1361,8 @@
         position: relative;
         display: inline-block;
         padding-right: 18px;
-        color: var(--muted);
+        color: rgba(246, 247, 255, 0.68);
+        font-weight: 700;
         text-decoration: none;
         transition:
           color 180ms ease,
@@ -1347,7 +1419,8 @@
 
       .footer-contact p {
         margin: 0;
-        color: var(--muted);
+        color: rgba(246, 247, 255, 0.68);
+        font-weight: 600;
       }
 
       .footer-contact a {
@@ -1430,8 +1503,10 @@
         gap: 18px;
         margin-top: 42px;
         padding-top: 22px;
-        border-top: 1px solid rgba(95, 105, 140, 0.18);
+        color: rgba(246, 247, 255, 0.64);
+        border-top: 1px solid rgba(95, 105, 140, 0.26);
         font-size: 0.88rem;
+        font-weight: 700;
       }
 
       @media (max-width: 1100px) {
@@ -1884,19 +1959,20 @@
           <div class="section-layout">
             <div class="section-copy">
               <div>
-                <p class="eyebrow">What Nobal is</p>
-                <h2 class="story-title">A calmer way to follow the world.</h2>
+                <p class="eyebrow">What nobal.news is</p>
+                <h2 class="story-title">&ldquo;An empowering way to follow the world&rdquo;</h2>
                 <p class="story-kicker">
-                  Nobal turns the news homepage into a spatial, context-first view
-                  of what is happening. It starts with place, then connects topic,
-                  timeline, and source context.
+                  nobal.news turns the traditional news homepage into a spatial,
+                  context-first tool that returns agency to users pursuing
+                  understanding of specific topics and places. nobal.news allows
+                  users to...
                 </p>
               </div>
 
               <ul class="story-list">
-                <li><strong>Place-first news</strong><br />Stories begin with where they are happening, making global events easier to scan and compare.</li>
-                <li><strong>Context over clutter</strong><br />Background, related updates, and source trails sit beside the headline instead of being buried.</li>
-                <li><strong>Built for quick checks</strong><br />Open it, scan the globe, drill into what changed, and move on without another endless feed.</li>
+                <li><strong>1.</strong> Access customized media streams</li>
+                <li><strong>2.</strong> Understand diverse perspectives</li>
+                <li><strong>3.</strong> Build community around healthy media consumption and discourse</li>
               </ul>
             </div>
           </div>
@@ -1912,19 +1988,20 @@
 
             <div class="section-copy">
               <div>
-                <p class="eyebrow">How it works</p>
-                <h2 class="story-title">From globe to story in a few seconds.</h2>
+                <p class="eyebrow">How nobal works</p>
+                <h2 class="story-title">&ldquo;Global stories in a few seconds.&rdquo;</h2>
                 <p class="story-kicker">
-                  The globe becomes the entry point: scan a region, open the topic
-                  layer, then follow the timeline and source trail without losing
-                  your place.
+                  The globe serves as the entry point - a lens through which
+                  individuals can intuitively discover more. Apply your topic
+                  filter, scan the globe, and explore, store &amp; share
+                  perspectives.
                 </p>
               </div>
 
               <ul class="story-list">
-                <li><strong>1.</strong> Scan global story clusters</li>
-                <li><strong>2.</strong> Open region and topic context</li>
-                <li><strong>3.</strong> Follow what changed over time</li>
+                <li><strong>1.</strong> Use nobal algorithm-builder to select specific topic set(s) related to your interests</li>
+                <li><strong>2.</strong> Analyze global perspectives via a traditional media formats or via a media-tagged globe</li>
+                <li><strong>3.</strong> Save media of interest, collect your unique thoughts and share both with your peers</li>
               </ul>
             </div>
           </div>
@@ -1937,23 +2014,19 @@
             <div class="section-copy">
               <div>
                 <p class="eyebrow">Product system</p>
-                <h2 class="story-title">Context before the click.</h2>
+                <h2 class="story-title">&ldquo;Tools built to empower&rdquo;</h2>
                 <p class="story-kicker">
-                  Nobal is designed for repeated visits, comparison, and calm
-                  reading. The interface makes room for story freshness, source
-                  context, and timeline changes.
+                  Nobal is designed for media consumption &amp; source analysis
+                  whilst also providing a long term home for information of
+                  interest and your perspectives. Our backbone is:
                 </p>
               </div>
 
-              <div class="mock-grid" aria-hidden="true">
-                <div class="mock-card"><span></span>Topic stream</div>
-                <div class="mock-card"><span></span>Source context</div>
-                <div class="mock-card"><span></span>Timeline</div>
-              </div>
-
               <ul class="story-list">
-                <li><strong>Compare coverage</strong><br />See how the same event is framed across different sources.</li>
-                <li><strong>Track change</strong><br />Separate confirmed updates from developing claims and older context.</li>
+                <li>Our novel algorithm selection system</li>
+                <li>Our innovative media consumptions interfaces</li>
+                <li>Our visual-spatial media storage system</li>
+                <li>Our provision of source background data</li>
               </ul>
             </div>
           </div>
@@ -1965,16 +2038,16 @@
           <div class="section-layout">
             <div class="section-panel from-left">
             <div class="cta">
-              <p class="eyebrow">Early access</p>
-              <h2>Build the live news layer next.</h2>
+              <p class="eyebrow">Beta Access</p>
+              <h2>Join a community putting information access and individual agency first.</h2>
               <p>
-                The globe is now in place as the visual anchor. The next layer can
-                add real story pins, topic filters, source context, and region-based
-                browsing.
+                Beta Access launch date will be announced soon. Click below to
+                join the waitlist - we are looking forward to providing
+                easy-to-use, empowering media literacy tools to all.
               </p>
               <div class="hero-actions">
-                <a class="button primary" href="mailto:hello@nobal.news">Request access</a>
-                <a class="button secondary" href="#top">Back to top</a>
+                <a class="button primary" href="mailto:wz@nobal.news">Request Beta Access</a>
+                <a class="button secondary" href="#top">Back to Top</a>
               </div>
             </div>
             </div>
@@ -1995,15 +2068,14 @@
               <img class="footer-logo" src="nobal-logo-transparent.png" width="758" height="177" alt="nobal.news" />
             </a>
             <p class="footer-about">
-              Global news context built around place, signal, and the story behind
-              each headline.
+              Enriching, Engaging, Empowering
             </p>
           </div>
 
           <div class="footer-contact">
             <span>Contact</span>
             <p>Early access, feedback, partnerships, and product questions.</p>
-            <a href="mailto:hello@nobal.news">hello@nobal.news</a>
+            <a href="mailto:wz@nobal.news">wz@nobal.news</a>
           </div>
         </div>
 
@@ -2034,7 +2106,7 @@
 
         <div class="footer-bottom">
           <span>&copy; 2026 nobal.news</span>
-          <span>Built for calmer global awareness.</span>
+          <span>Emancipation through Information Access</span>
         </div>
       </div>
     </footer>
@@ -2208,6 +2280,7 @@
       let scrollSpinBase = null;
       const topAutoSpinLimit = 28;
       const scrollSpinSpeed = 0.18;
+      const scrollCorrectionEase = 0.045;
       const showHeroPins = false;
 
       const globeSections = Array.from(document.querySelectorAll(".section[data-globe-side]"));
@@ -2215,6 +2288,7 @@
       const footer = document.querySelector("footer");
       const scrollCue = document.querySelector(".scroll-cue");
       const topCue = document.querySelector(".top-cue");
+      const accessSection = document.getElementById("access");
 
       const effects = {
         nodeGlow: 0,
@@ -2278,6 +2352,15 @@
         globeWrap.classList.toggle("is-muted", muted);
       }
 
+      function updateFooterPush() {
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const footerRect = footer.getBoundingClientRect();
+        const push = -Math.max(0, viewportHeight - footerRect.top);
+
+        document.documentElement.style.setProperty("--footer-push", `${push}px`);
+        document.documentElement.classList.toggle("is-footer-pushing", push < 0);
+      }
+
       function setCurrentSection(activeSection = null, exiting = false) {
         const activeId = activeSection ? activeSection.id : "";
 
@@ -2296,9 +2379,16 @@
         const viewportTrigger = viewportHeight * 0.24;
         const footerRect = footer.getBoundingClientRect();
 
-        if (footerRect.top < viewportHeight * 1.18) {
+        if (footerRect.top <= -viewportHeight) {
           setGlobePlacement("center", true);
           setCurrentSection();
+          hideHeroPinCallout();
+          return;
+        }
+
+        if (accessSection && footerRect.top < viewportTrigger) {
+          setGlobePlacement(accessSection.dataset.globeSide || "center");
+          setCurrentSection(accessSection);
           hideHeroPinCallout();
           return;
         }
@@ -2311,7 +2401,7 @@
         if (activeSection) {
           const rect = activeSection.getBoundingClientRect();
           const sectionProgress = (viewportTrigger - rect.top) / Math.max(1, rect.height);
-          const exiting = sectionProgress > 0.86;
+          const exiting = activeSection.id !== "access" && sectionProgress > 0.86;
 
           setGlobePlacement(activeSection.dataset.globeSide || "center");
           setCurrentSection(activeSection, exiting);
@@ -2328,6 +2418,7 @@
 
         globePlacementFrame = requestAnimationFrame(() => {
           globePlacementFrame = 0;
+          updateFooterPush();
           updateGlobePlacement();
           syncGlobeRotationToScroll();
           updateScrollCue();
@@ -2338,7 +2429,7 @@
         const scrollY = window.scrollY || window.pageYOffset || 0;
         const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
         const footerRect = footer.getBoundingClientRect();
-        const nearBottom = footerRect.top < viewportHeight * 1.18;
+        const nearBottom = footerRect.top < viewportHeight * 0.96;
 
         scrollCue.classList.toggle("is-hidden", scrollY > topAutoSpinLimit);
         topCue.classList.toggle("is-visible", nearBottom);
@@ -2355,11 +2446,12 @@
         }
 
         if (scrollSpinBase === null) {
-          scrollSpinBase = defaultHeroRotation[0];
+          scrollSpinBase = rotation[0] - scrollY * scrollSpinSpeed;
         }
 
+        scrollSpinBase += (defaultHeroRotation[0] - scrollSpinBase) * scrollCorrectionEase;
         rotation[0] = scrollSpinBase + scrollY * scrollSpinSpeed;
-        rotation[1] += (defaultHeroRotation[1] - rotation[1]) * 0.18;
+        rotation[1] += (defaultHeroRotation[1] - rotation[1]) * scrollCorrectionEase;
 
         if (!splash.classList.contains("is-done")) return;
         draw();
@@ -3207,10 +3299,14 @@
 
       canvas.addEventListener("pointerup", () => {
         dragging = false;
+        const scrollY = window.scrollY || window.pageYOffset || 0;
+        scrollSpinBase = scrollY > topAutoSpinLimit ? rotation[0] - scrollY * scrollSpinSpeed : null;
       });
 
       canvas.addEventListener("pointercancel", () => {
         dragging = false;
+        const scrollY = window.scrollY || window.pageYOffset || 0;
+        scrollSpinBase = scrollY > topAutoSpinLimit ? rotation[0] - scrollY * scrollSpinSpeed : null;
         hideHeroPinCallout();
       });
 
@@ -3327,6 +3423,7 @@
       resizeGlobe();
       resizeSectionGlobe();
       resizeFooterGlobe();
+      updateFooterPush();
       updateGlobePlacement();
       syncGlobeRotationToScroll();
       updateScrollCue();
