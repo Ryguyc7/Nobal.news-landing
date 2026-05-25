@@ -1,0 +1,2391 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>nobal.news discover layout ideas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #02040b;
+        --grid: rgba(122, 130, 170, 0.075);
+        --panel: rgba(16, 22, 36, 0.82);
+        --panel-2: rgba(25, 31, 48, 0.78);
+        --line: rgba(95, 105, 140, 0.32);
+        --line-strong: rgba(141, 136, 255, 0.54);
+        --purple: #4e49a7;
+        --purple-soft: rgba(78, 73, 167, 0.26);
+        --cyan: #67d7ff;
+        --green: #9bd88f;
+        --gold: #f0cb72;
+        --text: #f6f7ff;
+        --muted: #aab0c5;
+        --dim: #727990;
+        --topbar-height: 78px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        overflow-x: hidden;
+      }
+
+      body {
+        margin: 0;
+        overflow-x: hidden;
+        color: var(--text);
+        font-family:
+          "Space Grotesk", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background:
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+          radial-gradient(circle at 72% 12%, rgba(78, 73, 167, 0.18), transparent 24rem),
+          var(--bg);
+        background-size: 18px 18px, 18px 18px, auto, auto;
+        min-height: 100svh;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      button,
+      a,
+      .rail-button,
+      .deck-arrow,
+      .deck-dot,
+      .mode-tab,
+      .pill,
+      .feed-button {
+        touch-action: manipulation;
+      }
+
+      .topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 20;
+        border-bottom: 1px solid rgba(78, 73, 167, 0.72);
+        background: rgba(2, 4, 11, 0.84);
+        box-shadow: 0 0 18px rgba(78, 73, 167, 0.32);
+        backdrop-filter: blur(18px);
+      }
+
+      .nav {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        gap: 24px;
+        width: min(1380px, calc(100% - 32px));
+        min-height: var(--topbar-height);
+        margin: 0 auto;
+      }
+
+      .brand {
+        display: inline-flex;
+        width: clamp(210px, 18vw, 280px);
+        text-decoration: none;
+      }
+
+      .brand img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .nav-center,
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .nav-center {
+        justify-content: center;
+      }
+
+      .nav-actions {
+        justify-content: flex-end;
+      }
+
+      .pill,
+      .icon-button,
+      .mode-tab {
+        border: 1px solid rgba(95, 105, 140, 0.42);
+        background: rgba(17, 24, 39, 0.72);
+        color: var(--text);
+        cursor: pointer;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 38px;
+        padding: 0 14px;
+        border-radius: 999px;
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 800;
+      }
+
+      .pill.is-active {
+        color: #fff;
+        background: rgba(78, 73, 167, 0.72);
+        border-color: rgba(141, 136, 255, 0.72);
+      }
+
+      .search {
+        width: min(340px, 100%);
+        min-width: 0;
+        height: 42px;
+        padding: 0 14px;
+        color: var(--text);
+        background: rgba(17, 24, 39, 0.72);
+        border: 1px solid rgba(95, 105, 140, 0.42);
+        border-radius: 999px;
+        outline: none;
+      }
+
+      .search::placeholder {
+        color: var(--dim);
+      }
+
+      main {
+        width: min(1380px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: calc(var(--topbar-height) + 30px) 0 72px;
+      }
+
+      .page-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+        gap: 24px;
+        margin-bottom: 22px;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: #8d88ff;
+        font-size: 0.76rem;
+        font-weight: 900;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 760px;
+        margin-bottom: 12px;
+        font-size: clamp(2rem, 4vw, 4.3rem);
+        line-height: 0.98;
+      }
+
+      .lede {
+        max-width: 780px;
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.65;
+      }
+
+      .status-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        min-width: min(460px, 100%);
+      }
+
+      .stat {
+        padding: 14px;
+        background: rgba(17, 24, 39, 0.66);
+        border: 1px solid rgba(95, 105, 140, 0.26);
+        border-radius: 8px;
+      }
+
+      .stat strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 1.25rem;
+      }
+
+      .stat span {
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .mode-bar {
+        position: sticky;
+        top: var(--topbar-height);
+        z-index: 12;
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        margin: 0 0 24px;
+        padding: 12px 0;
+        background: linear-gradient(180deg, rgba(2, 4, 11, 0.94), rgba(2, 4, 11, 0.76));
+        border-bottom: 1px solid rgba(95, 105, 140, 0.18);
+        backdrop-filter: blur(16px);
+      }
+
+      .mode-bar.is-hidden {
+        display: none;
+      }
+
+      .mode-tab {
+        flex: 0 0 auto;
+        min-height: 42px;
+        padding: 0 16px;
+        border-radius: 8px;
+        color: var(--muted);
+        font-weight: 900;
+      }
+
+      .mode-tab.is-active {
+        color: #fff;
+        background: rgba(78, 73, 167, 0.78);
+        border-color: rgba(141, 136, 255, 0.72);
+      }
+
+      .layout-view {
+        display: none;
+      }
+
+      .layout-view.is-active {
+        display: block;
+      }
+
+      .view-note {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 18px;
+        padding: 14px 16px;
+        color: var(--muted);
+        background: rgba(17, 24, 39, 0.5);
+        border: 1px solid rgba(95, 105, 140, 0.22);
+        border-radius: 8px;
+      }
+
+      .view-note strong {
+        color: var(--text);
+      }
+
+      .row-stack {
+        display: grid;
+        gap: 30px;
+      }
+
+      .topic-row {
+        position: relative;
+      }
+
+      .row-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 12px;
+      }
+
+      .row-head h2 {
+        margin: 0;
+        font-size: clamp(1.25rem, 2vw, 1.8rem);
+      }
+
+      .row-head p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .rail-wrap {
+        position: relative;
+        padding-inline: 54px;
+      }
+
+      .article-rail {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: calc((100% - 42px) / 4);
+        gap: 14px;
+        overflow-x: auto;
+        padding: 2px 2px 12px;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+      }
+
+      .article-rail::-webkit-scrollbar {
+        display: none;
+      }
+
+      .rail-button {
+        position: absolute;
+        top: 50%;
+        z-index: 4;
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 72px;
+        color: var(--text);
+        background: rgba(2, 4, 11, 0.72);
+        border: 1px solid rgba(141, 136, 255, 0.36);
+        border-radius: 8px;
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+        cursor: pointer;
+        transform: translateY(-50%);
+        backdrop-filter: blur(12px);
+      }
+
+      .rail-button.prev {
+        left: 0;
+      }
+
+      .rail-button.next {
+        right: 0;
+      }
+
+      .rail-button::before {
+        width: 10px;
+        height: 10px;
+        content: "";
+        border-left: 2px solid currentColor;
+        border-bottom: 2px solid currentColor;
+      }
+
+      .rail-button.prev::before {
+        transform: rotate(45deg);
+      }
+
+      .rail-button.next::before {
+        transform: rotate(225deg);
+      }
+
+      .article-card {
+        position: relative;
+        min-height: 310px;
+        overflow: hidden;
+        padding: 14px;
+        scroll-snap-align: start;
+        background:
+          linear-gradient(180deg, rgba(246, 247, 255, 0.05), rgba(246, 247, 255, 0)),
+          var(--panel);
+        border: 1px solid rgba(95, 105, 140, 0.3);
+        border-radius: 8px;
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
+      }
+
+      .article-card.video-card,
+      .compact-story.video-card {
+        padding: 0;
+        background:
+          linear-gradient(180deg, rgba(255, 84, 84, 0.08), rgba(246, 247, 255, 0)),
+          rgba(20, 17, 28, 0.84);
+        border-color: rgba(255, 118, 118, 0.34);
+      }
+
+      .article-card.social-card,
+      .compact-story.social-card {
+        background:
+          linear-gradient(180deg, rgba(103, 215, 255, 0.07), rgba(246, 247, 255, 0)),
+          rgba(13, 22, 34, 0.84);
+        border-color: rgba(103, 215, 255, 0.3);
+      }
+
+      .article-card.featured {
+        grid-column: span 2;
+        min-height: 470px;
+      }
+
+      .thumb {
+        position: relative;
+        min-height: 138px;
+        margin-bottom: 14px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 6px;
+        background:
+          radial-gradient(circle at 20% 18%, rgba(103, 215, 255, 0.34), transparent 9rem),
+          radial-gradient(circle at 80% 20%, rgba(155, 216, 143, 0.2), transparent 9rem),
+          linear-gradient(135deg, rgba(78, 73, 167, 0.72), rgba(14, 19, 32, 0.86));
+      }
+
+      .thumb::after {
+        position: absolute;
+        inset: 0;
+        content: "";
+        background:
+          linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+        background-size: 18px 18px;
+        opacity: 0.2;
+      }
+
+      .thumb.place {
+        background:
+          radial-gradient(circle at 36% 34%, rgba(240, 203, 114, 0.3), transparent 8rem),
+          radial-gradient(circle at 68% 70%, rgba(103, 215, 255, 0.28), transparent 8rem),
+          linear-gradient(135deg, rgba(42, 53, 79, 0.9), rgba(9, 13, 24, 0.94));
+      }
+
+      .thumb.source {
+        background:
+          radial-gradient(circle at 70% 26%, rgba(155, 216, 143, 0.24), transparent 9rem),
+          linear-gradient(135deg, rgba(78, 73, 167, 0.62), rgba(9, 13, 24, 0.94));
+      }
+
+      .video-card .thumb {
+        min-height: 224px;
+        margin: 0;
+        background:
+          radial-gradient(circle at 24% 26%, rgba(255, 118, 118, 0.28), transparent 8rem),
+          radial-gradient(circle at 76% 64%, rgba(78, 73, 167, 0.34), transparent 9rem),
+          linear-gradient(135deg, rgba(34, 20, 32, 0.95), rgba(8, 10, 18, 0.96));
+      }
+
+      .compact-story.video-card .thumb {
+        min-height: 132px;
+      }
+
+      .feature-lead.video-card .thumb {
+        min-height: 390px;
+      }
+
+      .video-card .thumb::before {
+        position: absolute;
+        inset: 50% auto auto 50%;
+        z-index: 1;
+        width: 54px;
+        height: 38px;
+        content: "";
+        background: rgba(255, 84, 84, 0.88);
+        border-radius: 10px;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 30px rgba(255, 84, 84, 0.3);
+      }
+
+      .video-card .thumb::after {
+        position: absolute;
+        inset: 50% auto auto 50%;
+        z-index: 2;
+        width: 0;
+        height: 0;
+        content: "";
+        border-top: 9px solid transparent;
+        border-bottom: 9px solid transparent;
+        border-left: 14px solid #fff;
+        background: none;
+        transform: translate(-35%, -50%);
+        opacity: 1;
+      }
+
+      .video-body {
+        padding: 14px;
+      }
+
+      .video-duration {
+        position: absolute;
+        right: 12px;
+        bottom: 10px;
+        z-index: 3;
+        padding: 4px 7px;
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 900;
+        background: rgba(0, 0, 0, 0.74);
+        border-radius: 5px;
+      }
+
+      .tweet-card {
+        display: grid;
+        align-content: start;
+        gap: 12px;
+      }
+
+      .tweet-head {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 10px;
+        align-items: center;
+      }
+
+      .tweet-avatar {
+        width: 34px;
+        height: 34px;
+        background: rgba(103, 215, 255, 0.62);
+        border-radius: 50%;
+        box-shadow: 0 0 22px rgba(103, 215, 255, 0.22);
+      }
+
+      .tweet-head strong {
+        display: block;
+        line-height: 1.1;
+      }
+
+      .tweet-head span,
+      .tweet-actions {
+        color: var(--dim);
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      .tweet-text {
+        color: var(--text);
+        font-size: 1rem;
+        line-height: 1.45;
+      }
+
+      .tweet-card .tweet-text {
+        margin: 0;
+        color: var(--text);
+      }
+
+      .tweet-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(103, 215, 255, 0.16);
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-bottom: 10px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        padding: 0 8px;
+        color: rgba(246, 247, 255, 0.74);
+        font-size: 0.68rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        background: rgba(78, 73, 167, 0.26);
+        border: 1px solid rgba(141, 136, 255, 0.28);
+        border-radius: 999px;
+      }
+
+      .tag.place-tag {
+        color: #f7dda0;
+        background: rgba(240, 203, 114, 0.12);
+        border-color: rgba(240, 203, 114, 0.28);
+      }
+
+      .tag.source-tag {
+        color: #bfe8b9;
+        background: rgba(155, 216, 143, 0.12);
+        border-color: rgba(155, 216, 143, 0.28);
+      }
+
+      .tag.video-tag {
+        color: #ffd0d0;
+        background: rgba(255, 84, 84, 0.13);
+        border-color: rgba(255, 118, 118, 0.32);
+      }
+
+      .tag.social-tag {
+        color: #b9ddff;
+        background: rgba(103, 215, 255, 0.12);
+        border-color: rgba(103, 215, 255, 0.32);
+      }
+
+      .article-card h3 {
+        margin-bottom: 10px;
+        font-size: 1.05rem;
+        line-height: 1.18;
+      }
+
+      .article-card p {
+        margin-bottom: 0;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 18px;
+        color: var(--dim);
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      .signal {
+        color: var(--green);
+      }
+
+      .editorial-grid {
+        display: grid;
+        grid-template-columns: 1.25fr repeat(2, minmax(0, 0.8fr));
+        gap: 16px;
+      }
+
+      .editorial-grid .article-card:not(.featured) {
+        min-height: 300px;
+      }
+
+      .place-layout {
+        display: grid;
+        grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.25fr);
+        gap: 18px;
+      }
+
+      .place-panel,
+      .matrix-panel,
+      .timeline-panel {
+        background: rgba(17, 24, 39, 0.68);
+        border: 1px solid rgba(95, 105, 140, 0.28);
+        border-radius: 8px;
+      }
+
+      .place-panel {
+        min-height: 680px;
+        padding: 18px;
+      }
+
+      .map-surface {
+        position: sticky;
+        top: calc(var(--topbar-height) + 82px);
+        min-height: 560px;
+        overflow: hidden;
+        border: 1px solid rgba(141, 136, 255, 0.2);
+        border-radius: 8px;
+        background:
+          radial-gradient(circle at 50% 42%, rgba(78, 73, 167, 0.42), transparent 17rem),
+          radial-gradient(circle at 68% 60%, rgba(103, 215, 255, 0.16), transparent 12rem),
+          rgba(2, 4, 11, 0.66);
+      }
+
+      .map-surface::before {
+        position: absolute;
+        inset: 12%;
+        content: "";
+        border: 1px solid rgba(141, 136, 255, 0.34);
+        border-radius: 50%;
+        box-shadow:
+          inset 0 0 42px rgba(78, 73, 167, 0.18),
+          0 0 42px rgba(78, 73, 167, 0.16);
+      }
+
+      .map-pin {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        color: #fff;
+        font-size: 0.68rem;
+        font-weight: 900;
+        background: rgba(78, 73, 167, 0.86);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 50%;
+        box-shadow: 0 0 24px rgba(78, 73, 167, 0.48);
+      }
+
+      .pin-1 {
+        top: 30%;
+        left: 44%;
+      }
+
+      .pin-2 {
+        top: 45%;
+        left: 54%;
+      }
+
+      .pin-3 {
+        top: 60%;
+        left: 38%;
+      }
+
+      .place-feed {
+        display: grid;
+        gap: 12px;
+      }
+
+      .place-story {
+        display: grid;
+        grid-template-columns: 118px minmax(0, 1fr);
+        gap: 14px;
+        padding: 14px;
+        background: rgba(17, 24, 39, 0.68);
+        border: 1px solid rgba(95, 105, 140, 0.28);
+        border-radius: 8px;
+      }
+
+      .place-story .thumb {
+        min-height: 92px;
+        margin: 0;
+      }
+
+      .matrix-grid {
+        display: grid;
+        grid-template-columns: 210px repeat(4, minmax(0, 1fr));
+        gap: 1px;
+        overflow: hidden;
+        border: 1px solid rgba(95, 105, 140, 0.3);
+        border-radius: 8px;
+        background: rgba(95, 105, 140, 0.22);
+      }
+
+      .matrix-cell {
+        min-height: 124px;
+        padding: 14px;
+        background: rgba(17, 24, 39, 0.84);
+      }
+
+      .matrix-cell.header {
+        min-height: 72px;
+        color: var(--text);
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .matrix-cell.axis {
+        color: var(--muted);
+        font-weight: 900;
+      }
+
+      .matrix-cell p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.45;
+      }
+
+      .timeline-stack {
+        display: grid;
+        gap: 14px;
+      }
+
+      .stacked-news-layout {
+        display: grid;
+        grid-template-columns: minmax(220px, 0.72fr) minmax(380px, 1.15fr) minmax(220px, 0.72fr);
+        gap: 16px;
+        align-items: stretch;
+      }
+
+      .side-stack,
+      .center-stack {
+        display: grid;
+        gap: 14px;
+        height: 100%;
+      }
+
+      .side-stack {
+        grid-template-rows: repeat(3, minmax(0, 1fr));
+      }
+
+      .center-stack {
+        grid-template-rows: repeat(2, minmax(0, 1fr));
+      }
+
+      .compact-story {
+        min-height: 0;
+        padding: 14px;
+        background:
+          linear-gradient(180deg, rgba(246, 247, 255, 0.045), rgba(246, 247, 255, 0)),
+          rgba(17, 24, 39, 0.78);
+        border: 1px solid rgba(95, 105, 140, 0.28);
+        border-radius: 8px;
+      }
+
+      .compact-story .thumb {
+        min-height: 72px;
+        margin-bottom: 10px;
+      }
+
+      .compact-story h3 {
+        margin-bottom: 8px;
+        font-size: 0.98rem;
+        line-height: 1.2;
+      }
+
+      .compact-story p {
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.45;
+      }
+
+      .center-story {
+        min-height: 360px;
+      }
+
+      .center-story .thumb {
+        min-height: 170px;
+      }
+
+      .feature-stack-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.72fr);
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .feature-stack-layout.is-reversed {
+        grid-template-columns: minmax(280px, 0.72fr) minmax(0, 1.45fr);
+      }
+
+      .feature-stack-layout.is-reversed .feature-lead {
+        grid-column: 2;
+      }
+
+      .feature-stack-layout.is-reversed .feature-side {
+        grid-column: 1;
+        grid-row: 1;
+      }
+
+      .feature-lead {
+        min-height: 590px;
+        padding: clamp(18px, 2vw, 24px);
+      }
+
+      .feature-lead .thumb {
+        min-height: 320px;
+      }
+
+      .feature-lead h3 {
+        font-size: clamp(1.4rem, 2.2vw, 2.2rem);
+      }
+
+      .feature-side {
+        display: grid;
+        grid-template-rows: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        min-height: 590px;
+      }
+
+      .feature-side .compact-story {
+        display: grid;
+        align-content: start;
+      }
+
+      .discover-feed {
+        display: grid;
+        gap: 34px;
+      }
+
+      .feed-controls {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 18px;
+        padding: 12px 14px;
+        background: rgba(17, 24, 39, 0.56);
+        border: 1px solid rgba(95, 105, 140, 0.24);
+        border-radius: 8px;
+        backdrop-filter: blur(14px);
+      }
+
+      .feed-controls p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .feed-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .feed-button {
+        min-height: 38px;
+        padding: 0 14px;
+        color: var(--text);
+        font-weight: 900;
+        background: rgba(17, 24, 39, 0.76);
+        border: 1px solid rgba(141, 136, 255, 0.38);
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .feed-button.primary {
+        background: rgba(78, 73, 167, 0.76);
+        border-color: rgba(141, 136, 255, 0.72);
+      }
+
+      .feed-loader {
+        display: grid;
+        place-items: center;
+        min-height: 80px;
+        color: var(--muted);
+        font-size: 0.74rem;
+        font-weight: 900;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .feed-section {
+        display: grid;
+        gap: 14px;
+      }
+
+      .feed-section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .feed-section-head h2 {
+        margin-bottom: 4px;
+        font-size: clamp(1.35rem, 2.2vw, 2rem);
+      }
+
+      .feed-section-head p {
+        margin-bottom: 0;
+        color: var(--muted);
+      }
+
+      .discover-feed .story-deck {
+        min-height: min(620px, calc(100svh - var(--topbar-height) - 150px));
+      }
+
+      .discover-feed .deck-copy h2 {
+        font-size: clamp(2.2rem, 4.4vw, 4.8rem);
+      }
+
+      .story-deck {
+        position: relative;
+        min-height: calc(100svh - var(--topbar-height) - 170px);
+        overflow: hidden;
+        border: 1px solid rgba(95, 105, 140, 0.3);
+        border-radius: 8px;
+        background: rgba(17, 24, 39, 0.62);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.26);
+      }
+
+      .deck-slide {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(340px, 0.72fr);
+        gap: clamp(26px, 5vw, 80px);
+        align-items: end;
+        padding: clamp(28px, 5vw, 72px);
+        opacity: 0;
+        pointer-events: none;
+        transform: scale(1.02);
+        transition:
+          opacity 420ms ease,
+          transform 620ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .deck-slide.is-active {
+        opacity: 1;
+        pointer-events: auto;
+        transform: scale(1);
+      }
+
+      .deck-slide::before {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        content: "";
+        background:
+          radial-gradient(circle at 68% 32%, rgba(103, 215, 255, 0.22), transparent 16rem),
+          radial-gradient(circle at 22% 72%, rgba(78, 73, 167, 0.36), transparent 20rem),
+          linear-gradient(135deg, rgba(2, 4, 11, 0.12), rgba(2, 4, 11, 0.72));
+      }
+
+      .deck-slide:nth-child(2)::before {
+        background:
+          radial-gradient(circle at 74% 34%, rgba(240, 203, 114, 0.22), transparent 15rem),
+          radial-gradient(circle at 18% 70%, rgba(78, 73, 167, 0.42), transparent 20rem),
+          linear-gradient(135deg, rgba(2, 4, 11, 0.16), rgba(2, 4, 11, 0.76));
+      }
+
+      .deck-slide:nth-child(3)::before {
+        background:
+          radial-gradient(circle at 76% 28%, rgba(155, 216, 143, 0.2), transparent 16rem),
+          radial-gradient(circle at 28% 68%, rgba(78, 73, 167, 0.38), transparent 20rem),
+          linear-gradient(135deg, rgba(2, 4, 11, 0.14), rgba(2, 4, 11, 0.76));
+      }
+
+      .deck-slide.video-card::before {
+        background:
+          radial-gradient(circle at 72% 30%, rgba(255, 84, 84, 0.24), transparent 16rem),
+          radial-gradient(circle at 20% 72%, rgba(78, 73, 167, 0.42), transparent 20rem),
+          linear-gradient(135deg, rgba(18, 8, 13, 0.22), rgba(2, 4, 11, 0.78));
+      }
+
+      .deck-slide.social-card::before {
+        background:
+          radial-gradient(circle at 72% 30%, rgba(103, 215, 255, 0.2), transparent 16rem),
+          radial-gradient(circle at 20% 72%, rgba(78, 73, 167, 0.36), transparent 20rem),
+          linear-gradient(135deg, rgba(5, 16, 24, 0.22), rgba(2, 4, 11, 0.78));
+      }
+
+      .deck-copy,
+      .deck-panel {
+        position: relative;
+        z-index: 1;
+      }
+
+      .deck-copy h2 {
+        max-width: 840px;
+        margin-bottom: 18px;
+        font-size: clamp(2.4rem, 5vw, 5.6rem);
+        line-height: 0.95;
+      }
+
+      .deck-copy p {
+        max-width: 700px;
+        color: var(--muted);
+        font-size: clamp(1rem, 1.3vw, 1.18rem);
+        line-height: 1.65;
+      }
+
+      .deck-panel {
+        display: grid;
+        gap: 12px;
+        padding: 18px;
+        background: rgba(2, 4, 11, 0.46);
+        border: 1px solid rgba(141, 136, 255, 0.24);
+        border-radius: 8px;
+        backdrop-filter: blur(18px);
+      }
+
+      .deck-panel-row {
+        padding: 14px;
+        background: rgba(17, 24, 39, 0.74);
+        border: 1px solid rgba(95, 105, 140, 0.22);
+        border-radius: 8px;
+      }
+
+      .deck-panel-row strong {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .deck-panel-row span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .deck-controls {
+        position: absolute;
+        left: clamp(20px, 4vw, 56px);
+        right: clamp(20px, 4vw, 56px);
+        bottom: 24px;
+        z-index: 4;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .deck-arrows {
+        display: flex;
+        gap: 10px;
+      }
+
+      .deck-arrow,
+      .deck-dot {
+        border: 1px solid rgba(141, 136, 255, 0.36);
+        background: rgba(2, 4, 11, 0.64);
+        color: var(--text);
+        cursor: pointer;
+      }
+
+      .deck-arrow {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 8px;
+      }
+
+      .deck-arrow::before {
+        width: 9px;
+        height: 9px;
+        content: "";
+        border-left: 2px solid currentColor;
+        border-bottom: 2px solid currentColor;
+      }
+
+      .deck-arrow.prev::before {
+        transform: rotate(45deg);
+      }
+
+      .deck-arrow.next::before {
+        transform: rotate(225deg);
+      }
+
+      .deck-dots {
+        display: flex;
+        gap: 8px;
+      }
+
+      .deck-dot {
+        width: 34px;
+        height: 8px;
+        padding: 0;
+        border-radius: 999px;
+      }
+
+      .deck-dot.is-active {
+        background: #8d88ff;
+        border-color: #8d88ff;
+      }
+
+      .timeline-item {
+        position: relative;
+        display: grid;
+        grid-template-columns: 120px minmax(0, 1fr) 220px;
+        gap: 16px;
+        padding: 16px;
+        background: rgba(17, 24, 39, 0.7);
+        border: 1px solid rgba(95, 105, 140, 0.28);
+        border-radius: 8px;
+      }
+
+      .time-mark {
+        color: #8d88ff;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .source-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .source-list span {
+        display: block;
+        padding: 8px 10px;
+        color: var(--muted);
+        background: rgba(2, 4, 11, 0.38);
+        border: 1px solid rgba(95, 105, 140, 0.18);
+        border-radius: 6px;
+        font-size: 0.86rem;
+      }
+
+      @media (max-width: 980px) {
+        :root {
+          --topbar-height: 174px;
+        }
+
+        .nav {
+          grid-template-columns: 1fr;
+          justify-items: center;
+          padding: 14px 0;
+        }
+
+        .nav-actions {
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+
+        .search {
+          width: min(420px, 82vw);
+        }
+
+        .page-head,
+        .place-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .status-strip {
+          grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .editorial-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .article-rail {
+          grid-auto-columns: calc((100% - 14px) / 2);
+        }
+
+        .matrix-grid {
+          grid-template-columns: 160px repeat(4, minmax(180px, 1fr));
+          overflow-x: auto;
+        }
+
+        .timeline-item {
+          grid-template-columns: 1fr;
+        }
+
+        .stacked-news-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .feature-stack-layout,
+        .feature-stack-layout.is-reversed {
+          grid-template-columns: 1fr;
+        }
+
+        .feature-stack-layout.is-reversed .feature-lead,
+        .feature-stack-layout.is-reversed .feature-side {
+          grid-column: auto;
+          grid-row: auto;
+        }
+
+        .feature-lead,
+        .feature-side {
+          min-height: 0;
+        }
+
+        .feature-side {
+          grid-template-columns: 1fr 1fr 1fr;
+          grid-template-rows: none;
+        }
+
+        .feed-section-head {
+          display: block;
+        }
+
+        .feed-controls {
+          display: block;
+        }
+
+        .feed-actions {
+          margin-top: 12px;
+        }
+
+        .deck-slide {
+          grid-template-columns: 1fr;
+          align-items: center;
+          padding-bottom: 92px;
+        }
+
+        .side-stack {
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: none;
+        }
+      }
+
+      @media (max-width: 640px) {
+        main {
+          width: min(100% - 20px, 1380px);
+        }
+
+        .nav-center {
+          flex-wrap: wrap;
+        }
+
+        .status-strip,
+        .editorial-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .article-rail {
+          grid-auto-columns: 100%;
+        }
+
+        .rail-button {
+          display: none;
+        }
+
+        .rail-wrap {
+          padding-inline: 0;
+        }
+
+        .place-story {
+          grid-template-columns: 1fr;
+        }
+
+        .side-stack {
+          grid-template-columns: 1fr;
+          grid-template-rows: none;
+        }
+
+        .feature-side {
+          grid-template-columns: 1fr;
+        }
+
+        .story-deck {
+          min-height: 760px;
+        }
+
+        .deck-controls {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <nav class="nav" aria-label="Discover layout navigation">
+        <a class="brand" href="index.html" aria-label="nobal.news home">
+          <img src="nobal-logo-transparent.png" width="758" height="177" alt="nobal.news" />
+        </a>
+
+        <div class="nav-center" aria-label="Prototype pages">
+          <button class="pill is-active" type="button" data-page="discover">Discover</button>
+          <button class="pill" type="button" data-page="layouts">Layouts</button>
+        </div>
+
+        <div class="nav-actions">
+          <input class="search" type="search" placeholder="Search topics, places, sources" aria-label="Search news" />
+          <button class="pill" type="button">Saved</button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div class="mode-bar is-hidden" role="tablist" aria-label="Layout modes">
+        <button class="mode-tab is-active" type="button" data-view="netflix">Topic rails</button>
+        <button class="mode-tab" type="button" data-view="stacked">Stacked center</button>
+        <button class="mode-tab" type="button" data-view="feature">Feature stack</button>
+        <button class="mode-tab" type="button" data-view="slides">Story slides</button>
+      </div>
+
+      <section class="layout-view is-active" id="view-all" aria-label="Combined discover feed layout">
+        <div class="feed-controls" aria-label="All feed controls">
+          <p>Infinite mixed discover feed. Each new block picks a different layout from the one before it.</p>
+          <div class="feed-actions">
+            <button class="feed-button primary" type="button" data-randomize-feed>Randomize</button>
+            <button class="feed-button" type="button" data-reset-feed>Reset</button>
+          </div>
+        </div>
+
+        <div class="discover-feed" data-dynamic-feed>
+          <section class="feed-section" aria-label="Lead story module">
+            <div class="feed-section-head">
+              <div>
+                <p class="eyebrow">Today on nobal.news</p>
+                <h2>Start with the global lead, then browse by topic and context.</h2>
+                <p>A combined discover feed with one hero story, horizontal topic rails, and a denser story stack.</p>
+              </div>
+              <p>Updated 18m ago</p>
+            </div>
+
+            <div class="story-deck" data-deck>
+              <article class="deck-slide is-active">
+                <div class="deck-copy">
+                  <p class="eyebrow">Global lead</p>
+                  <h2>Food prices rise unevenly across connected regions.</h2>
+                  <p>
+                    Scan the affected places, then open the source trail, timeline, and related local reporting without
+                    leaving the story cluster.
+                  </p>
+                </div>
+                <aside class="deck-panel">
+                  <div class="deck-panel-row"><strong>11 regions affected</strong><span>Mapped from local and international coverage.</span></div>
+                  <div class="deck-panel-row"><strong>4 source angles</strong><span>Local impact, markets, policy, and climate.</span></div>
+                  <div class="deck-panel-row"><strong>Context ready</strong><span>Background and timeline grouped before the click.</span></div>
+                </aside>
+              </article>
+
+              <article class="deck-slide">
+                <div class="deck-copy">
+                  <p class="eyebrow">Source comparison</p>
+                  <h2>One AI safety bill, several competing frames.</h2>
+                  <p>
+                    See where coverage agrees, where it diverges, and which claims are confirmed across policy,
+                    industry, and civil society sources.
+                  </p>
+                </div>
+                <aside class="deck-panel">
+                  <div class="deck-panel-row"><strong>Regulators</strong><span>Auditing, compliance, and enforcement dates.</span></div>
+                  <div class="deck-panel-row"><strong>Companies</strong><span>Deployment timelines and competitive impact.</span></div>
+                  <div class="deck-panel-row"><strong>Civil society</strong><span>Accountability, access, and public protections.</span></div>
+                </aside>
+              </article>
+
+              <article class="deck-slide">
+                <div class="deck-copy">
+                  <p class="eyebrow">Place-first update</p>
+                  <h2>Heat advisories expand as cities change daily routines.</h2>
+                  <p>
+                    Move from place to context: schools, transit, health guidance, energy load, and how local outlets
+                    describe the same pressure.
+                  </p>
+                </div>
+                <aside class="deck-panel">
+                  <div class="deck-panel-row"><strong>South Asia</strong><span>School schedules and worker safety guidance updated.</span></div>
+                  <div class="deck-panel-row"><strong>Middle East</strong><span>Transit agencies adjust outdoor route timing.</span></div>
+                  <div class="deck-panel-row"><strong>North Africa</strong><span>Energy load warnings connect to infrastructure stories.</span></div>
+                </aside>
+              </article>
+
+              <div class="deck-controls">
+                <div class="deck-dots" aria-label="Story slide position">
+                  <button class="deck-dot is-active" type="button" data-slide="0" aria-label="Show slide 1"></button>
+                  <button class="deck-dot" type="button" data-slide="1" aria-label="Show slide 2"></button>
+                  <button class="deck-dot" type="button" data-slide="2" aria-label="Show slide 3"></button>
+                </div>
+                <div class="deck-arrows">
+                  <button class="deck-arrow prev" type="button" data-deck-prev aria-label="Previous story slide"></button>
+                  <button class="deck-arrow next" type="button" data-deck-next aria-label="Next story slide"></button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="feed-section" aria-label="Topic rail module">
+            <div class="feed-section-head">
+              <div>
+                <h2>Continue by topic</h2>
+                <p>Horizontal story rails for fast scanning across the areas a user follows.</p>
+              </div>
+              <p>24 active clusters</p>
+            </div>
+            <div class="rail-wrap">
+              <button class="rail-button prev" type="button" aria-label="Previous topic stories"></button>
+              <div class="article-rail" data-rail>
+                <article class="article-card">
+                  <div class="thumb place"></div>
+                  <div class="meta"><span class="tag place-tag">Middle East</span><span class="tag">Developing</span></div>
+                  <h3>Ceasefire talks move into a second day with regional mediators present</h3>
+                  <p>See the places involved, what shifted overnight, and how neighboring governments are responding.</p>
+                  <div class="card-footer"><span>Updated 18m ago</span><span class="signal">High signal</span></div>
+                </article>
+                <article class="article-card">
+                  <div class="thumb source"></div>
+                  <div class="meta"><span class="tag source-tag">Source spread</span><span class="tag">Analysis</span></div>
+                  <h3>European defense ministers outline new procurement plan</h3>
+                  <p>Compare coverage by policy desks, regional outlets, and market-focused reporting.</p>
+                  <div class="card-footer"><span>4 angles</span><span class="signal">Context ready</span></div>
+                </article>
+                <article class="article-card">
+                  <div class="thumb"></div>
+                  <div class="meta"><span class="tag place-tag">South China Sea</span><span class="tag">Timeline</span></div>
+                  <h3>Naval patrol routes draw new statements from three capitals</h3>
+                  <p>Follow the claim trail from first report to official responses and regional reaction.</p>
+                  <div class="card-footer"><span>Updated 41m ago</span><span>9 sources</span></div>
+                </article>
+                <article class="article-card">
+                  <div class="thumb place"></div>
+                  <div class="meta"><span class="tag place-tag">South Asia</span><span class="tag">Heat</span></div>
+                  <h3>Heat advisories expand as schools and transit agencies adjust schedules</h3>
+                  <p>See the local actions beside regional climate context and health guidance.</p>
+                  <div class="card-footer"><span>1h ago</span><span>12 sources</span></div>
+                </article>
+              </div>
+              <button class="rail-button next" type="button" aria-label="Next topic stories"></button>
+            </div>
+          </section>
+
+          <section class="feed-section" aria-label="Dense story stack module">
+            <div class="feed-section-head">
+              <div>
+                <h2>More to watch</h2>
+                <p>Two main stories supported by smaller place, source, and timeline updates.</p>
+              </div>
+              <p>Briefing queue</p>
+            </div>
+
+            <div class="stacked-news-layout">
+              <aside class="side-stack" aria-label="Left supporting stories">
+                <article class="compact-story">
+                  <div class="thumb place"></div>
+                  <div class="meta"><span class="tag place-tag">Europe</span></div>
+                  <h3>Border policy story links national politics to nearby towns</h3>
+                  <p>Place context helps show who is affected and where.</p>
+                </article>
+                <article class="compact-story">
+                  <div class="thumb source"></div>
+                  <div class="meta"><span class="tag source-tag">Sources</span></div>
+                  <h3>Energy coverage splits between markets and household costs</h3>
+                  <p>Compare business framing with local reporting.</p>
+                </article>
+                <article class="compact-story">
+                  <div class="thumb"></div>
+                  <div class="meta"><span class="tag">Timeline</span></div>
+                  <h3>Online safety proposal moves from committee to floor debate</h3>
+                  <p>Confirmed updates stay separate from older context.</p>
+                </article>
+              </aside>
+
+              <section class="center-stack" aria-label="Main stories">
+                <article class="article-card center-story">
+                  <div class="thumb source"></div>
+                  <div class="meta"><span class="tag source-tag">Perspective</span><span class="tag">Developing</span></div>
+                  <h3>New model safety rules draw different reactions across regions</h3>
+                  <p>Source framing gives users the disagreement before they choose which article to open.</p>
+                  <div class="card-footer"><span>8 source angles</span><span class="signal">Context ready</span></div>
+                </article>
+                <article class="article-card center-story">
+                  <div class="thumb place"></div>
+                  <div class="meta"><span class="tag place-tag">Infrastructure</span><span class="tag">Mapped</span></div>
+                  <h3>Storm repairs create delays across several port cities</h3>
+                  <p>Local repairs, shipping timelines, and regional economic coverage sit in one cluster.</p>
+                  <div class="card-footer"><span>6 cities</span><span class="signal">Mapped</span></div>
+                </article>
+              </section>
+
+              <aside class="side-stack" aria-label="Right supporting stories">
+                <article class="compact-story">
+                  <div class="thumb"></div>
+                  <div class="meta"><span class="tag place-tag">South Asia</span></div>
+                  <h3>Heat advisories expand as schools adjust schedules</h3>
+                  <p>Local actions beside regional climate context.</p>
+                </article>
+                <article class="compact-story">
+                  <div class="thumb place"></div>
+                  <div class="meta"><span class="tag">Security</span></div>
+                  <h3>Naval patrol routes draw statements from three capitals</h3>
+                  <p>Follow the claim trail from report to response.</p>
+                </article>
+                <article class="compact-story">
+                  <div class="thumb source"></div>
+                  <div class="meta"><span class="tag place-tag">Markets</span></div>
+                  <h3>Grid investment headlines differ sharply by source type</h3>
+                  <p>Financial, local, and government coverage in one lane.</p>
+                </article>
+              </aside>
+            </div>
+          </section>
+        </div>
+        <div class="feed-loader" data-feed-loader>Loading more layouts</div>
+      </section>
+
+      <section class="layout-view" id="view-netflix" aria-label="Topic rails layout">
+        <div class="view-note">
+          <span><strong>Topic rails:</strong> Netflix-style horizontal sections grouped by topic, place, or user interest.</span>
+          <span>Best for quick scanning and casual discovery.</span>
+        </div>
+
+        <div class="row-stack">
+          <section class="topic-row">
+            <div class="row-head">
+              <div>
+                <h2>Global security</h2>
+                <p>Latest clusters across conflict, diplomacy, and regional stability.</p>
+              </div>
+              <p>12 active stories</p>
+            </div>
+            <div class="rail-wrap">
+              <button class="rail-button prev" type="button" aria-label="Previous global security stories"></button>
+              <div class="article-rail" data-rail>
+                <article class="article-card">
+                  <div class="thumb place"></div>
+                  <div class="meta"><span class="tag place-tag">Middle East</span><span class="tag">Developing</span></div>
+                  <h3>Ceasefire talks move into a second day with regional mediators present</h3>
+                  <p>See the places involved, what shifted overnight, and how neighboring governments are responding.</p>
+                  <div class="card-footer"><span>Updated 18m ago</span><span class="signal">High signal</span></div>
+                </article>
+                <article class="article-card">
+                  <div class="thumb source"></div>
+                  <div class="meta"><span class="tag source-tag">Source spread</span><span class="tag">Analysis</span></div>
+                  <h3>European defense ministers outline new procurement plan</h3>
+                  <p>Compare coverage by policy desks, regional outlets, and market-focused reporting.</p>
+                  <div class="card-footer"><span>4 angles</span><span class="signal">Context ready</span></div>
+                </article>
+                <article class="article-card">
+                  <div class="thumb"></div>
+                  <div class="meta"><span class="tag place-tag">South China Sea</span><span class="tag">Timeline</span></div>
+                  <h3>Naval patrol routes draw new statements from three capitals</h3>
+                  <p>Follow the claim trail from first report to official responses and regional reaction.</p>
+                  <div class="card-footer"><span>Updated 41m ago</span><span>9 sources</span></div>
+                </article>
+                <article class="article-card">
+                  <div class="thumb source"></div>
+                  <div class="meta"><span class="tag">Elections</span><span class="tag place-tag">West Africa</span></div>
+                  <h3>Observer groups publish early notes from contested local elections</h3>
+                  <p>Place, timeline, source reliability, and local reporting grouped in one card.</p>
+                  <div class="card-footer"><span>2h ago</span><span class="signal">Verified</span></div>
+                </article>
+                <article class="article-card">
+                  <div class="thumb place"></div>
+                  <div class="meta"><span class="tag place-tag">Eastern Europe</span><span class="tag">Background</span></div>
+                  <h3>Border infrastructure updates become a regional political issue</h3>
+                  <p>Understand why a local project is now part of a wider security debate.</p>
+                  <div class="card-footer"><span>3h ago</span><span>6 sources</span></div>
+                </article>
+              </div>
+              <button class="rail-button next" type="button" aria-label="Next global security stories"></button>
+            </div>
+          </section>
+
+          <section class="topic-row">
+            <div class="row-head">
+              <div>
+                <h2>Climate and infrastructure</h2>
+                <p>Weather, energy, migration, and public systems connected to place.</p>
+              </div>
+              <p>9 active stories</p>
+            </div>
+            <div class="rail-wrap">
+              <button class="rail-button prev" type="button" aria-label="Previous climate stories"></button>
+              <div class="article-rail" data-rail>
+                <article class="article-card">
+                  <div class="thumb place"></div>
+                  <div class="meta"><span class="tag place-tag">Andes</span><span class="tag">Water</span></div>
+                  <h3>Reservoir levels reshape local energy planning before peak season</h3>
+                  <p>Scan the affected regions, prior drought context, and public utility statements.</p>
+                  <div class="card-footer"><span>Updated 27m ago</span><span class="signal">High signal</span></div>
+                </article>
+                <article class="article-card">
+                  <div class="thumb"></div>
+                  <div class="meta"><span class="tag place-tag">South Asia</span><span class="tag">Heat</span></div>
+                  <h3>Heat advisories expand as schools and transit agencies adjust schedules</h3>
+                  <p>See the local actions beside regional climate context and health guidance.</p>
+                  <div class="card-footer"><span>1h ago</span><span>12 sources</span></div>
+                </article>
+                <article class="article-card">
+                  <div class="thumb source"></div>
+                  <div class="meta"><span class="tag">Energy</span><span class="tag source-tag">Markets</span></div>
+                  <h3>Grid investment headlines differ sharply by source type</h3>
+                  <p>Compare financial coverage, local reporting, and government releases in one lane.</p>
+                  <div class="card-footer"><span>5 angles</span><span>Compare</span></div>
+                </article>
+                <article class="article-card">
+                  <div class="thumb place"></div>
+                  <div class="meta"><span class="tag place-tag">Mediterranean</span><span class="tag">Ports</span></div>
+                  <h3>Storm repairs create delays across several port cities</h3>
+                  <p>Track which claims are confirmed, which are estimates, and what changed today.</p>
+                  <div class="card-footer"><span>2h ago</span><span class="signal">Context ready</span></div>
+                </article>
+              </div>
+              <button class="rail-button next" type="button" aria-label="Next climate stories"></button>
+            </div>
+          </section>
+
+          <section class="topic-row">
+            <div class="row-head">
+              <div>
+                <h2>Technology and society</h2>
+                <p>Policy, platforms, labor, and adoption stories grouped by impact.</p>
+              </div>
+              <p>15 active stories</p>
+            </div>
+            <div class="rail-wrap">
+              <button class="rail-button prev" type="button" aria-label="Previous technology stories"></button>
+              <div class="article-rail" data-rail>
+                <article class="article-card">
+                  <div class="thumb source"></div>
+                  <div class="meta"><span class="tag source-tag">Regulation</span><span class="tag">AI</span></div>
+                  <h3>New model safety rules draw different reactions across regions</h3>
+                  <p>Compare regulator statements, company responses, and civil society concerns.</p>
+                  <div class="card-footer"><span>Updated 34m ago</span><span>8 sources</span></div>
+                </article>
+                <article class="article-card">
+                  <div class="thumb"></div>
+                  <div class="meta"><span class="tag place-tag">East Asia</span><span class="tag">Semiconductors</span></div>
+                  <h3>Chip supply headlines connect export policy with local factory plans</h3>
+                  <p>Follow the place trail from national policy to individual production sites.</p>
+                  <div class="card-footer"><span>58m ago</span><span class="signal">Mapped</span></div>
+                </article>
+                <article class="article-card">
+                  <div class="thumb place"></div>
+                  <div class="meta"><span class="tag">Labor</span><span class="tag place-tag">North America</span></div>
+                  <h3>Worker retraining programs become a state-level political issue</h3>
+                  <p>Browse local reports beside policy analysis and budget timelines.</p>
+                  <div class="card-footer"><span>2h ago</span><span>6 sources</span></div>
+                </article>
+                <article class="article-card">
+                  <div class="thumb source"></div>
+                  <div class="meta"><span class="tag">Platforms</span><span class="tag source-tag">Social impact</span></div>
+                  <h3>Online safety proposals split coverage between rights and enforcement</h3>
+                  <p>See how the same proposal is framed by legal, local, and advocacy sources.</p>
+                  <div class="card-footer"><span>3h ago</span><span>Compare</span></div>
+                </article>
+              </div>
+              <button class="rail-button next" type="button" aria-label="Next technology stories"></button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="layout-view" id="view-stacked" aria-label="Stacked center layout">
+        <div class="view-note">
+          <span><strong>Stacked center:</strong> Two primary stories in the middle, with smaller supporting story stacks on both sides.</span>
+          <span>Best for a denser homepage that still has clear hierarchy.</span>
+        </div>
+
+        <div class="stacked-news-layout">
+          <aside class="side-stack" aria-label="Left supporting stories">
+            <article class="compact-story">
+              <div class="thumb place"></div>
+              <div class="meta"><span class="tag place-tag">Europe</span></div>
+              <h3>Border policy story links national politics to nearby towns</h3>
+              <p>Place context helps show who is affected and where.</p>
+            </article>
+            <article class="compact-story">
+              <div class="thumb source"></div>
+              <div class="meta"><span class="tag source-tag">Sources</span></div>
+              <h3>Energy coverage splits between markets and household costs</h3>
+              <p>Compare business framing with local reporting.</p>
+            </article>
+            <article class="compact-story">
+              <div class="thumb"></div>
+              <div class="meta"><span class="tag">Timeline</span></div>
+              <h3>Online safety proposal moves from committee to floor debate</h3>
+              <p>Confirmed updates stay separate from older context.</p>
+            </article>
+          </aside>
+
+          <section class="center-stack" aria-label="Main stories">
+            <article class="article-card center-story">
+              <div class="thumb place"></div>
+              <div class="meta"><span class="tag place-tag">Global lead</span><span class="tag">Mapped context</span></div>
+              <h3>Food prices rise unevenly as weather, shipping, and currency pressures overlap</h3>
+              <p>
+                A larger center card can carry the top story, with place context, source spread, and related updates
+                visible before the user clicks.
+              </p>
+              <div class="card-footer"><span>11 regions affected</span><span class="signal">Briefing ready</span></div>
+            </article>
+            <article class="article-card center-story">
+              <div class="thumb source"></div>
+              <div class="meta"><span class="tag source-tag">Perspective</span><span class="tag">Developing</span></div>
+              <h3>New model safety rules draw different reactions across regions</h3>
+              <p>
+                The second center story keeps the page balanced while giving users another high-signal path into the news.
+              </p>
+              <div class="card-footer"><span>8 source angles</span><span class="signal">Context ready</span></div>
+            </article>
+          </section>
+
+          <aside class="side-stack" aria-label="Right supporting stories">
+            <article class="compact-story">
+              <div class="thumb"></div>
+              <div class="meta"><span class="tag place-tag">South Asia</span></div>
+              <h3>Heat advisories expand as schools adjust schedules</h3>
+              <p>Local actions beside regional climate context.</p>
+            </article>
+            <article class="compact-story">
+              <div class="thumb place"></div>
+              <div class="meta"><span class="tag">Security</span></div>
+              <h3>Naval patrol routes draw statements from three capitals</h3>
+              <p>Follow the claim trail from report to response.</p>
+            </article>
+            <article class="compact-story">
+              <div class="thumb source"></div>
+              <div class="meta"><span class="tag place-tag">Ports</span></div>
+              <h3>Storm repairs create delays across several port cities</h3>
+              <p>Confirmed claims, estimates, and what changed today.</p>
+            </article>
+          </aside>
+        </div>
+      </section>
+
+      <section class="layout-view" id="view-feature" aria-label="Feature stack layout">
+        <div class="view-note">
+          <span><strong>Feature stack:</strong> One large lead story paired with three smaller supporting cards.</span>
+          <span>Best for a front-page feel with a clear main story and quick secondary reads.</span>
+        </div>
+
+        <div class="feature-stack-layout">
+          <article class="article-card feature-lead">
+            <div class="thumb place"></div>
+            <div class="meta"><span class="tag place-tag">Global lead</span><span class="tag">Context</span></div>
+            <h3>Food prices rise unevenly as weather, shipping, and currency pressures overlap</h3>
+            <p>
+              This lead area gives one story room to breathe while keeping the surrounding context visible before a click.
+            </p>
+            <div class="card-footer"><span>Updated 18m ago</span><span class="signal">High signal</span></div>
+          </article>
+
+          <aside class="feature-side" aria-label="Supporting stories">
+            <article class="compact-story">
+              <div class="thumb source"></div>
+              <div class="meta"><span class="tag source-tag">Sources</span></div>
+              <h3>Energy coverage splits between markets and household costs</h3>
+              <p>Compare business framing with local reporting.</p>
+            </article>
+            <article class="compact-story">
+              <div class="thumb"></div>
+              <div class="meta"><span class="tag place-tag">South Asia</span></div>
+              <h3>Heat advisories expand as schools adjust schedules</h3>
+              <p>Local actions beside regional climate context.</p>
+            </article>
+            <article class="compact-story">
+              <div class="thumb place"></div>
+              <div class="meta"><span class="tag">Security</span></div>
+              <h3>Naval patrol routes draw statements from three capitals</h3>
+              <p>Follow the claim trail from report to response.</p>
+            </article>
+          </aside>
+        </div>
+      </section>
+
+      <section class="layout-view" id="view-slides" aria-label="Full screen story slides layout">
+        <div class="view-note">
+          <span><strong>Story slides:</strong> A full-screen, hero-style discover mode with three high-signal stories.</span>
+          <span>Best for immersive browsing and a guided daily briefing.</span>
+        </div>
+
+        <div class="story-deck" data-deck>
+          <article class="deck-slide is-active">
+            <div class="deck-copy">
+              <p class="eyebrow">Global lead</p>
+              <h2>Food prices rise unevenly across connected regions.</h2>
+              <p>
+                Start with a big visual story, then show the places affected, the source trail, and the context that
+                explains why the story matters beyond one headline.
+              </p>
+            </div>
+            <aside class="deck-panel">
+              <div class="deck-panel-row"><strong>11 regions affected</strong><span>Mapped from local and international coverage.</span></div>
+              <div class="deck-panel-row"><strong>4 source angles</strong><span>Local impact, markets, policy, and climate.</span></div>
+              <div class="deck-panel-row"><strong>Updated 18m ago</strong><span>New port delay data added to the timeline.</span></div>
+            </aside>
+          </article>
+
+          <article class="deck-slide">
+            <div class="deck-copy">
+              <p class="eyebrow">Perspective view</p>
+              <h2>One AI safety bill, several competing frames.</h2>
+              <p>
+                A slide can present a single story cluster with source framing built in, helping users understand
+                who is emphasizing innovation, enforcement, rights, or risk.
+              </p>
+            </div>
+            <aside class="deck-panel">
+              <div class="deck-panel-row"><strong>Regulators</strong><span>Focus on auditing, compliance, and enforcement dates.</span></div>
+              <div class="deck-panel-row"><strong>Companies</strong><span>Focus on deployment timelines and competitive impact.</span></div>
+              <div class="deck-panel-row"><strong>Civil society</strong><span>Focus on accountability, access, and public protections.</span></div>
+            </aside>
+          </article>
+
+          <article class="deck-slide">
+            <div class="deck-copy">
+              <p class="eyebrow">Place-first update</p>
+              <h2>Heat advisories expand as cities change daily routines.</h2>
+              <p>
+                The story slide can move from place to context: schools, transit, health guidance, energy load, and
+                how different local outlets describe the same pressure.
+              </p>
+            </div>
+            <aside class="deck-panel">
+              <div class="deck-panel-row"><strong>South Asia</strong><span>School schedules and worker safety guidance updated.</span></div>
+              <div class="deck-panel-row"><strong>Middle East</strong><span>Transit agencies adjust outdoor route timing.</span></div>
+              <div class="deck-panel-row"><strong>North Africa</strong><span>Energy load warnings connect to infrastructure stories.</span></div>
+            </aside>
+          </article>
+
+          <div class="deck-controls">
+            <div class="deck-dots" aria-label="Story slide position">
+              <button class="deck-dot is-active" type="button" data-slide="0" aria-label="Show slide 1"></button>
+              <button class="deck-dot" type="button" data-slide="1" aria-label="Show slide 2"></button>
+              <button class="deck-dot" type="button" data-slide="2" aria-label="Show slide 3"></button>
+            </div>
+            <div class="deck-arrows">
+              <button class="deck-arrow prev" type="button" data-deck-prev aria-label="Previous story slide"></button>
+              <button class="deck-arrow next" type="button" data-deck-next aria-label="Next story slide"></button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const pageButtons = Array.from(document.querySelectorAll("[data-page]"));
+      const modeBar = document.querySelector(".mode-bar");
+      const tabs = Array.from(document.querySelectorAll(".mode-tab"));
+      const views = Array.from(document.querySelectorAll(".layout-view"));
+      const dynamicFeed = document.querySelector("[data-dynamic-feed]");
+      const feedLoader = document.querySelector("[data-feed-loader]");
+      const resetFeedButton = document.querySelector("[data-reset-feed]");
+      const randomizeFeedButton = document.querySelector("[data-randomize-feed]");
+      const layoutTypes = ["slides", "rails", "stacked", "feature"];
+      let lastFeedLayout = "";
+      let sampleCursor = 0;
+
+      const sampleItems = [
+        {
+          type: "Article",
+          tagClass: "",
+          topic: "Climate",
+          place: "South Asia",
+          thumb: "place",
+          title: "Heat alerts expand as schools and transit agencies adjust schedules",
+          summary: "Local reporting, health guidance, and regional climate context sit together in one story cluster.",
+          footer: "Updated 22m ago",
+          signal: "Context ready",
+        },
+        {
+          type: "YouTube",
+          tagClass: "video-tag",
+          topic: "Explainer",
+          place: "Global trade",
+          thumb: "source",
+          title: "Video briefing: why port delays are showing up in food prices",
+          summary: "A visual explainer connects shipping chokepoints, local markets, and policy responses.",
+          footer: "12 min video",
+          signal: "Watch",
+        },
+        {
+          type: "Twitter/X",
+          tagClass: "social-tag",
+          topic: "On the ground",
+          place: "East Africa",
+          thumb: "",
+          title: "Verified local post shows flood damage near a major crossing",
+          summary: "The post is paired with source notes, location context, and updates from nearby outlets.",
+          footer: "Posted 41m ago",
+          signal: "Verified",
+        },
+        {
+          type: "Article",
+          tagClass: "",
+          topic: "Security",
+          place: "Mediterranean",
+          thumb: "place",
+          title: "Naval patrol routes draw new statements from three capitals",
+          summary: "Follow the claim trail from first report to official responses and regional reaction.",
+          footer: "Updated 55m ago",
+          signal: "9 sources",
+        },
+        {
+          type: "YouTube",
+          tagClass: "video-tag",
+          topic: "Interview",
+          place: "Europe",
+          thumb: "source",
+          title: "Analyst interview compares defense spending plans across Europe",
+          summary: "A video segment is grouped with policy desks, regional coverage, and budget timelines.",
+          footer: "8 min video",
+          signal: "Compare",
+        },
+        {
+          type: "Twitter/X",
+          tagClass: "social-tag",
+          topic: "Official post",
+          place: "North America",
+          thumb: "",
+          title: "Agency thread lists new wildfire evacuation zones by county",
+          summary: "The social update is mapped beside local articles, advisories, and prior incident context.",
+          footer: "Thread",
+          signal: "Mapped",
+        },
+        {
+          type: "Article",
+          tagClass: "",
+          topic: "Technology",
+          place: "United States",
+          thumb: "source",
+          title: "AI safety proposal splits coverage between innovation and enforcement",
+          summary: "Regulators, companies, and civil society sources emphasize different stakes in the same bill.",
+          footer: "Updated 1h ago",
+          signal: "4 angles",
+        },
+        {
+          type: "YouTube",
+          tagClass: "video-tag",
+          topic: "Field report",
+          place: "Andes",
+          thumb: "place",
+          title: "Reservoir drone footage adds context to regional energy planning",
+          summary: "Video evidence is connected to drought history, utility statements, and local reporting.",
+          footer: "5 min video",
+          signal: "High signal",
+        },
+        {
+          type: "Twitter/X",
+          tagClass: "social-tag",
+          topic: "Live update",
+          place: "Middle East",
+          thumb: "source",
+          title: "Reporter post tracks ceasefire talks as mediators enter second day",
+          summary: "The live post is grouped with confirmed updates, background, and nearby government statements.",
+          footer: "Live",
+          signal: "Developing",
+        },
+      ];
+
+      function nextSample() {
+        const item = sampleItems[sampleCursor % sampleItems.length];
+        sampleCursor += 1;
+        return item;
+      }
+
+      function mediaClass(item) {
+        if (item.type === "YouTube") return "video-card";
+        if (item.type === "Twitter/X") return "social-card";
+        return "article-format";
+      }
+
+      function showPage(pageName) {
+        pageButtons.forEach(button => button.classList.toggle("is-active", button.dataset.page === pageName));
+
+        if (pageName === "discover") {
+          modeBar.classList.add("is-hidden");
+          views.forEach(view => view.classList.toggle("is-active", view.id === "view-all"));
+          return;
+        }
+
+        modeBar.classList.remove("is-hidden");
+        const activeTab = tabs.find(tab => tab.classList.contains("is-active")) || tabs[0];
+        const viewName = activeTab.dataset.view;
+        tabs.forEach(tab => tab.classList.toggle("is-active", tab === activeTab));
+        views.forEach(view => view.classList.toggle("is-active", view.id === `view-${viewName}`));
+      }
+
+      pageButtons.forEach(button => {
+        button.addEventListener("click", () => showPage(button.dataset.page));
+      });
+
+      tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+          const viewName = tab.dataset.view;
+
+          showPage("layouts");
+          tabs.forEach(item => item.classList.toggle("is-active", item === tab));
+          views.forEach(view => view.classList.toggle("is-active", view.id === `view-${viewName}`));
+        });
+      });
+
+      function articleCard(item = nextSample(), extraClass = "") {
+        if (item.type === "YouTube") {
+          return `
+            <article class="article-card video-card ${extraClass}">
+              <div class="thumb ${item.thumb}">
+                <span class="video-duration">${item.footer.replace(" video", "")}</span>
+              </div>
+              <div class="video-body">
+                <div class="meta"><span class="tag video-tag">YouTube</span><span class="tag source-tag">${item.topic}</span></div>
+                <h3>${item.title}</h3>
+                <div class="card-footer"><span>${item.place}</span><span class="signal">${item.signal}</span></div>
+              </div>
+            </article>
+          `;
+        }
+
+        if (item.type === "Twitter/X") {
+          return tweetCard(item, `article-card ${extraClass}`);
+        }
+
+        return `
+          <article class="article-card ${mediaClass(item)} ${extraClass}">
+            <div class="thumb ${item.thumb}"></div>
+            <div class="meta">
+              <span class="tag ${item.tagClass}">${item.type}</span>
+              <span class="tag place-tag">${item.place}</span>
+              <span class="tag source-tag">${item.topic}</span>
+            </div>
+            <h3>${item.title}</h3>
+            <p>${item.summary}</p>
+            <div class="card-footer"><span>${item.footer}</span><span class="signal">${item.signal}</span></div>
+          </article>
+        `;
+      }
+
+      function tweetCard(item, baseClass = "compact-story") {
+        return `
+          <article class="${baseClass} social-card tweet-card">
+            <div class="tweet-head">
+              <div class="tweet-avatar"></div>
+              <div>
+                <strong>@nobalcontext</strong>
+                <span>${item.place} · ${item.footer}</span>
+              </div>
+            </div>
+            <p class="tweet-text">${item.title}. ${item.summary}</p>
+            <div class="tweet-actions"><span>Reply</span><span>Repost</span><span>Save</span></div>
+          </article>
+        `;
+      }
+
+      function compactStory(item = nextSample()) {
+        if (item.type === "YouTube") {
+          return `
+            <article class="compact-story video-card">
+              <div class="thumb ${item.thumb}">
+                <span class="video-duration">${item.footer.replace(" video", "")}</span>
+              </div>
+              <div class="video-body">
+                <div class="meta"><span class="tag video-tag">YouTube</span></div>
+                <h3>${item.title}</h3>
+              </div>
+            </article>
+          `;
+        }
+
+        if (item.type === "Twitter/X") {
+          return tweetCard(item);
+        }
+
+        return `
+          <article class="compact-story ${mediaClass(item)}">
+            <div class="thumb ${item.thumb}"></div>
+            <div class="meta"><span class="tag ${item.tagClass}">${item.type}</span><span class="tag place-tag">${item.place}</span></div>
+            <h3>${item.title}</h3>
+            <p>${item.summary}</p>
+          </article>
+        `;
+      }
+
+      function slideDeckBlock() {
+        const slides = [nextSample(), nextSample(), nextSample()];
+        return `
+          <section class="feed-section" aria-label="Generated slide module" data-layout-type="slides">
+            <div class="feed-section-head">
+              <div>
+                <p class="eyebrow">Lead module</p>
+                <h2>Top stories across formats</h2>
+                <p>A rotating lead area for articles, YouTube videos, and verified Twitter/X posts.</p>
+              </div>
+              <p>Generated</p>
+            </div>
+            <div class="story-deck" data-deck>
+              ${slides.map((item, index) => `
+                <article class="deck-slide ${mediaClass(item)} ${index === 0 ? "is-active" : ""}">
+                  <div class="deck-copy">
+                    <p class="eyebrow">${item.type} / ${item.place}</p>
+                    <h2>${item.title}</h2>
+                    <p>${item.summary}</p>
+                  </div>
+                  <aside class="deck-panel">
+                    <div class="deck-panel-row"><strong>Format</strong><span>${item.type}</span></div>
+                    <div class="deck-panel-row"><strong>Topic</strong><span>${item.topic}</span></div>
+                    <div class="deck-panel-row"><strong>Status</strong><span>${item.signal}</span></div>
+                  </aside>
+                </article>
+              `).join("")}
+              <div class="deck-controls">
+                <div class="deck-dots" aria-label="Story slide position">
+                  <button class="deck-dot is-active" type="button" data-slide="0" aria-label="Show slide 1"></button>
+                  <button class="deck-dot" type="button" data-slide="1" aria-label="Show slide 2"></button>
+                  <button class="deck-dot" type="button" data-slide="2" aria-label="Show slide 3"></button>
+                </div>
+                <div class="deck-arrows">
+                  <button class="deck-arrow prev" type="button" data-deck-prev aria-label="Previous story slide"></button>
+                  <button class="deck-arrow next" type="button" data-deck-next aria-label="Next story slide"></button>
+                </div>
+              </div>
+            </div>
+          </section>
+        `;
+      }
+
+      function railBlock() {
+        return `
+          <section class="feed-section" aria-label="Generated topic rail module" data-layout-type="rails">
+            <div class="feed-section-head">
+              <div>
+                <h2>Topic rail</h2>
+                <p>Horizontal story cards grouped by topic, place, or source angle.</p>
+              </div>
+              <p>Generated</p>
+            </div>
+            <div class="rail-wrap">
+              <button class="rail-button prev" type="button" aria-label="Previous topic stories"></button>
+              <div class="article-rail" data-rail>
+                ${articleCard()}
+                ${articleCard()}
+                ${articleCard()}
+                ${articleCard()}
+                ${articleCard()}
+              </div>
+              <button class="rail-button next" type="button" aria-label="Next topic stories"></button>
+            </div>
+          </section>
+        `;
+      }
+
+      function stackedBlock() {
+        return `
+          <section class="feed-section" aria-label="Generated stacked module" data-layout-type="stacked">
+            <div class="feed-section-head">
+              <div>
+                <h2>Stacked center</h2>
+                <p>Two main cards with smaller supporting stories on both sides.</p>
+              </div>
+              <p>Generated</p>
+            </div>
+            <div class="stacked-news-layout">
+              <aside class="side-stack">${compactStory()}${compactStory()}${compactStory()}</aside>
+              <section class="center-stack">${articleCard()}${articleCard()}</section>
+              <aside class="side-stack">${compactStory()}${compactStory()}${compactStory()}</aside>
+            </div>
+          </section>
+        `;
+      }
+
+      function featureBlock() {
+        const reversed = Math.random() > 0.5 ? " is-reversed" : "";
+        const lead = nextSample();
+        return `
+          <section class="feed-section" aria-label="Generated feature stack module" data-layout-type="feature">
+            <div class="feed-section-head">
+              <div>
+                <h2>Feature stack</h2>
+                <p>One large lead card with three supporting cards on one side.</p>
+              </div>
+              <p>Generated</p>
+            </div>
+            <div class="feature-stack-layout${reversed}">
+              ${articleCard(lead, "feature-lead")}
+              <aside class="feature-side">${compactStory()}${compactStory()}${compactStory()}</aside>
+            </div>
+          </section>
+        `;
+      }
+
+      const layoutFactories = {
+        slides: slideDeckBlock,
+        rails: railBlock,
+        stacked: stackedBlock,
+        feature: featureBlock,
+      };
+
+      function pickLayoutType() {
+        const options = layoutTypes.filter(type => type !== lastFeedLayout);
+        const type = options[Math.floor(Math.random() * options.length)];
+        lastFeedLayout = type;
+        return type;
+      }
+
+      function appendRandomLayout() {
+        const type = pickLayoutType();
+        const template = document.createElement("template");
+        template.innerHTML = layoutFactories[type]().trim();
+        const section = template.content.firstElementChild;
+        dynamicFeed.append(section);
+        initRails(section);
+        initDecks(section);
+      }
+
+      function resetFeed() {
+        dynamicFeed.innerHTML = "";
+        lastFeedLayout = "";
+        for (let index = 0; index < 4; index += 1) {
+          appendRandomLayout();
+        }
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function randomizeFeed() {
+        resetFeed();
+      }
+
+      function initRails(scope = document) {
+        scope.querySelectorAll(".rail-wrap:not([data-ready])").forEach(wrap => {
+          const rail = wrap.querySelector("[data-rail]");
+          const prev = wrap.querySelector(".prev");
+          const next = wrap.querySelector(".next");
+
+          if (!rail || !prev || !next) return;
+
+          wrap.dataset.ready = "true";
+          rail.dataset.seedCount = String(rail.children.length);
+
+          function appendRailCopies(batchCount = 1) {
+            const seedCount = Number(rail.dataset.seedCount);
+            const seedCards = Array.from(rail.children).slice(0, seedCount);
+
+            for (let batchIndex = 0; batchIndex < batchCount; batchIndex += 1) {
+              seedCards.forEach(card => {
+                const copy = card.cloneNode(true);
+                copy.setAttribute("aria-hidden", "true");
+                rail.append(copy);
+              });
+            }
+          }
+
+          function keepRailFilled() {
+            while (rail.scrollWidth < rail.clientWidth * 3) {
+              appendRailCopies();
+            }
+          }
+
+          keepRailFilled();
+
+          function moveRail(direction) {
+            const distance = rail.clientWidth * 0.82;
+
+            if (direction > 0 && rail.scrollLeft + rail.clientWidth > rail.scrollWidth - distance * 1.6) {
+              appendRailCopies();
+            }
+
+            if (direction < 0 && rail.scrollLeft <= distance * 0.35) {
+              appendRailCopies();
+              rail.scrollLeft += rail.scrollWidth / 2;
+            }
+
+            rail.scrollBy({ left: distance * direction, behavior: "smooth" });
+          }
+
+          rail.addEventListener("scroll", () => {
+            if (rail.scrollLeft + rail.clientWidth > rail.scrollWidth - rail.clientWidth) {
+              appendRailCopies();
+            }
+          }, { passive: true });
+
+          prev.addEventListener("click", () => moveRail(-1));
+          next.addEventListener("click", () => moveRail(1));
+        });
+      }
+
+      function initDecks(scope = document) {
+        scope.querySelectorAll("[data-deck]:not([data-ready])").forEach(deck => {
+          const slides = Array.from(deck.querySelectorAll(".deck-slide"));
+          const dots = Array.from(deck.querySelectorAll(".deck-dot"));
+          const prev = deck.querySelector("[data-deck-prev]");
+          const next = deck.querySelector("[data-deck-next]");
+          let activeIndex = 0;
+
+          if (!slides.length || !prev || !next) return;
+
+          deck.dataset.ready = "true";
+
+          function showSlide(index) {
+            activeIndex = (index + slides.length) % slides.length;
+            slides.forEach((slide, slideIndex) => slide.classList.toggle("is-active", slideIndex === activeIndex));
+            dots.forEach((dot, dotIndex) => dot.classList.toggle("is-active", dotIndex === activeIndex));
+          }
+
+          dots.forEach(dot => {
+            dot.addEventListener("click", () => showSlide(Number(dot.dataset.slide)));
+          });
+
+          prev.addEventListener("click", () => showSlide(activeIndex - 1));
+          next.addEventListener("click", () => showSlide(activeIndex + 1));
+        });
+      }
+
+      initRails();
+      initDecks();
+
+      if (dynamicFeed) {
+        resetFeed();
+      }
+
+      resetFeedButton?.addEventListener("click", resetFeed);
+      randomizeFeedButton?.addEventListener("click", randomizeFeed);
+
+      if (feedLoader && "IntersectionObserver" in window) {
+        const feedObserver = new IntersectionObserver(entries => {
+          if (!entries.some(entry => entry.isIntersecting)) return;
+          for (let index = 0; index < 2; index += 1) {
+            appendRandomLayout();
+          }
+        }, { rootMargin: "500px 0px" });
+
+        feedObserver.observe(feedLoader);
+      }
+    </script>
+  </body>
+</html>

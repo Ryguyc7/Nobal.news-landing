@@ -727,6 +727,53 @@
         pointer-events: none;
       }
 
+      .hero-caption {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        z-index: 2;
+        display: grid;
+        justify-items: center;
+        gap: 9px;
+        width: 100%;
+        padding: 20px max(24px, calc((100vw - 1180px) / 2));
+        color: var(--muted);
+        text-align: center;
+        background:
+          linear-gradient(90deg, rgba(61, 59, 133, 0), rgba(39, 37, 83, 0.5) 18%, rgba(39, 37, 83, 0.5) 82%, rgba(61, 59, 133, 0));
+        border-block: 1px solid rgba(141, 136, 255, 0.14);
+        text-shadow:
+          0 2px 18px rgba(0, 0, 0, 0.86),
+          0 0 34px rgba(2, 4, 11, 0.96);
+        filter: drop-shadow(0 0 18px rgba(2, 4, 11, 0.86));
+        transform: translateY(-50%);
+        pointer-events: none;
+      }
+
+      .hero-caption strong {
+        max-width: 620px;
+        color: var(--text);
+        font-size: clamp(1.2rem, 1.85vw, 1.75rem);
+        font-weight: 900;
+        line-height: 1.15;
+      }
+
+      .hero-caption span {
+        max-width: 620px;
+        color: #8d88ff;
+        font-size: 0.76rem;
+        font-weight: 900;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .hero-caption span:last-child {
+        color: rgba(246, 247, 255, 0.78);
+        font-size: 0.72rem;
+        letter-spacing: 0.12em;
+      }
+
       .scroll-cue::after,
       .top-cue::before {
         width: 12px;
@@ -1951,6 +1998,12 @@
           <div class="pin-callout" aria-hidden="true"></div>
         </div>
 
+        <p class="hero-caption">
+          <strong>Nobal: node meets global</strong>
+          <span>Nobal connects global stories to location, context, and perspective</span>
+          <span>Built for better access to information</span>
+        </p>
+
         <a class="scroll-cue" href="#about">Scroll down</a>
       </section>
 
@@ -2764,6 +2817,7 @@
         ctx.fillText(label, 0, 0);
         ctx.restore();
       }
+
       function drawFooterSurfaceCircle(x, y, size) {
         const scaledSize = size * 0.45;
         const dx = x - footerCenter[0];
@@ -3217,6 +3271,8 @@
         if (heroGlobeVisible && !splashVisible && (atTop || dragging || activeHeroPin) && !pauseForScroll) {
           rotation[0] += dragging || activeHeroPin ? 0 : 0.16;
           draw();
+        } else if (!activeHeroPin) {
+          hideHeroPinCallout();
         }
 
         if (!pauseForScroll && !dragging && sectionGlobeVisible && (sectionDragging || frameIndex % 2 === 0)) {
